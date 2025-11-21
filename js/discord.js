@@ -19,7 +19,7 @@ export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
         fields: [
           { name: "Menu", value: itemsList ? itemsList : "-", inline: false },
           { name: "Notes", value: note || "-", inline: true },
-          { name: "Total", value: `**${fmt(total)}**`, inline: true }
+          { name: "Payment", value: `${customerInfo.method}\nTotal: **${fmt(total)}**`, inline: true }
         ],
         footer: { text: `BeByte Bazaar • ${new Date().toLocaleTimeString('id-ID')}` },
         timestamp: new Date().toISOString()
