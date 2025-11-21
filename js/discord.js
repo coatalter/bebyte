@@ -15,7 +15,7 @@ export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
       {
         title: `🔥 Pesanan Baru #${trxId.toString().slice(-4)}`,
         description: `Pemesan: ${custDisplay}`, 
-        color: 16769280, 
+        color: 16769280, // Warna Kuning BeByte
         fields: [
           { name: "Menu", value: itemsList ? itemsList : "-", inline: false },
           { name: "Notes", value: note || "-", inline: true },
@@ -39,4 +39,3 @@ export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
     return { success: false, msg: err };
   }
 }
-
