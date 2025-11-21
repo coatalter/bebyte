@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BeByte - Order System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bebyte: {
+              purple: '#6D28D9',
+              yellow: '#FFE100',
+              dark: '#1e1b4b',
+              green: '#4ade80'
+            }
+          },
+          fontFamily: {
+            sans: ['Fredoka', 'sans-serif'],
+            display: ['Bangers', 'cursive'] 
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen text-bebyte-dark pb-10">
+  
+  <nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="bg-bebyte-purple text-bebyte-yellow px-3 py-1 transform -rotate-2 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <h1 class="text-2xl font-black tracking-wider">BeByte<span class="text-white">_</span></h1>
+        </div>
+      </div>
+      <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all rounded-lg">
+        🔒 Admin
+      </button>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto p-4 md:p-6">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 mb-8 shadow-[6px_6px_0px_0px_rgba(255,225,0,1)] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+        <div class="relative z-10 text-center md:text-left">
+            <h2 class="text-4xl md:text-5xl font-black text-bebyte-purple mb-2 uppercase drop-shadow-sm">Technopreneurship 5.0</h2>
+            <p class="text-lg font-bold text-gray-600">Selasa, 25 November 2025 • Booth BeByte</p>
+            <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm">
+                🦖 Est. 2025
+            </div>
+        </div>
+        <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-bebyte-yellow rounded-full border-4 border-black z-0"></div>
+    </div>
+
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <section class="lg:col-span-2">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="h-4 w-4 bg-bebyte-yellow border-2 border-black rounded-full"></div>
+            <h2 class="text-3xl font-black text-white tracking-wide drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">MAIN MENU</h2>
+        </div>
+        
+        <div id="menu-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          </div>
+      </section>
+
+      <aside class="lg:col-span-1">
+        <div class="sticky top-24">
+            <div class="bg-bebyte-yellow border-4 border-black rounded-xl p-0 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.4)]">
+                <div class="bg-black p-3 flex justify-between items-center">
+                    <h3 class="text-white font-black text-xl tracking-widest uppercase">MY ORDER</h3>
+                    <span id="cart-count" class="bg-bebyte-green text-black text-xs font-bold px-2 py-1 rounded border border-white">0 Items</span>
+                </div>
+
+                <div class="p-4">
+                    <div id="cart-list" class="max-h-[300px] overflow-y-auto no-scrollbar space-y-2 mb-4">
+                        </div>
+
+                    <div class="border-t-4 border-black border-dashed pt-4 space-y-3">
+                        <input id="note" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black]" placeholder="Add notes (e.g: Less Ice)...">
+                        
+                        <div class="flex justify-between items-end">
+                            <span class="font-bold text-sm">Total Amount</span>
+                            <span id="total" class="font-black text-3xl text-bebyte-purple">Rp 0</span>
+                        </div>
+
+                        <button id="btn-send" class="w-full bg-bebyte-purple text-white border-2 border-black py-3 rounded-lg font-black text-xl tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:bg-purple-800">
+                            CHECKOUT NOW ➤
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-md shadow-2xl overflow-hidden">
+        <div class="bg-bebyte-purple p-4 flex justify-between items-center">
+            <h3 class="text-white font-black text-xl">DAILY REPORT</h3>
+            <button id="close-report" class="text-white font-bold hover:text-bebyte-yellow text-2xl">&times;</button>
+        </div>
+        <div id="report-content" class="p-6"></div>
+        <div class="p-4 border-t-2 border-gray-200 bg-gray-50 flex justify-end">
+            <button id="clear-report" class="text-red-600 font-bold text-sm hover:underline">RESET DATABASE</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="modal-variant" class="fixed inset-0 bg-black/80 hidden flex items-end md:items-center justify-center z-[60] backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-white border-4 border-bebyte-purple rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all scale-100">
+        <div class="bg-bebyte-purple p-4 flex justify-between items-center border-b-4 border-black">
+            <h3 id="variant-title" class="text-white font-black text-lg tracking-wide">PILIH VARIAN</h3>
+            <button id="close-variant" class="text-white font-bold hover:text-bebyte-yellow text-2xl leading-none">&times;</button>
+        </div>
+        
+        <div class="p-4 bg-gray-50">
+            <div id="variant-options" class="space-y-3">
+                </div>
+        </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
