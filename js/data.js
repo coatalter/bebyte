@@ -10,7 +10,7 @@ export const MENU = [
     price: 12000, 
     category: 'Food', 
     img: './assets/ubiunguahh.jpg',
-    variants: ['Coklat', 'Keju-Mozza'] 
+    variants: ['Coklat', 'Keju'] 
   },
   { 
     id: 2, 
@@ -25,7 +25,7 @@ export const MENU = [
     name: 'Sticky Milk Series', 
     price: 15000, 
     category: 'Drink', 
-    img: './assets/stickymilk.jpg', 
+    img: './assets/stickymilk.jpg',
     variants: ['Mango', 'Matcha'] 
   },
   { 
@@ -45,4 +45,3 @@ export const MENU = [
     variants: ['Mix', 'BBQ', 'Balado']
   },
 ];
-
