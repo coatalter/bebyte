@@ -3,6 +3,7 @@ export const CONFIG = {
   STORE_NAME: 'BeByte'
 };
 
+// active: true (ADA), active: false (HABIS)
 export const MENU = [
   { 
     id: 1, 
@@ -10,7 +11,10 @@ export const MENU = [
     price: 12000, 
     category: 'Food', 
     img: './assets/ubiunguahh.jpg',
-    variants: ['Coklat', 'Keju'] 
+    variants: [
+      { name: 'Coklat', active: true },
+      { name: 'Keju', active: true }
+    ] 
   },
   { 
     id: 2, 
@@ -18,7 +22,8 @@ export const MENU = [
     price: 8000, 
     category: 'Food', 
     img: './assets/cilokahh.jpg',
-    variants: null
+    variants: null,
+    active: true 
   },
   { 
     id: 3, 
@@ -26,7 +31,10 @@ export const MENU = [
     price: 15000, 
     category: 'Drink', 
     img: './assets/stickymilk.jpg',
-    variants: ['Mango', 'Matcha'] 
+    variants: [
+      { name: 'Mango', active: true },
+      { name: 'Matcha', active: true }
+    ] 
   },
   { 
     id: 5, 
@@ -34,7 +42,8 @@ export const MENU = [
     price: 7000, 
     category: 'Drink', 
     img: './assets/eslumut.jpg',
-    variants: null
+    variants: null,
+    active: true
   },
   { 
     id: 6, 
@@ -42,6 +51,10 @@ export const MENU = [
     price: 10000, 
     category: 'Food', 
     img: './assets/enoki.jpg',
-    variants: ['Mix', 'BBQ', 'Balado']
+    variants: [
+      { name: 'Mix', active: true }, 
+      { name: 'BBQ', active: true }, 
+      { name: 'Balado', active: true }
+    ]
   },
 ];
