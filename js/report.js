@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'bebyte_transaksi_log'; // Ganti key biar data fresh
+const STORAGE_KEY = 'bebyte_transaksi_log'; 
 
 // Fungsi Simpan Transaksi
 export function saveTransaction(items, total, note) {
@@ -6,12 +6,11 @@ export function saveTransaction(items, total, note) {
     const newTx = {
       id: Date.now(),
       date: new Date().toLocaleString('id-ID'),
-      items: items, // Array item yang sudah ada variannya
+      items: items, 
       total: total,
       note: note
     };
 
-    // Ambil data lama, kalau error anggap array kosong
     let history = [];
     try {
       history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -38,7 +37,7 @@ export function getReport() {
     const totalOmset = history.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
     const totalTrx = history.length;
 
-    // Hitung Item Terlaris (Support nama item dengan varian)
+    // Hitung Item Terlaris 
     let itemCounts = {};
     history.forEach(tx => {
       if(Array.isArray(tx.items)) {
@@ -70,3 +69,4 @@ export function clearReport() {
     window.location.reload();
   }
 }
+
