@@ -8,11 +8,11 @@ const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency:
 let cart = JSON.parse(localStorage.getItem('cart_temp') || '[]');
 let isStockMode = false; 
 
-// Load menu dari LocalStorage jika ada (biar status stok tersimpan), kalau tidak pakai default dari data.js
+// Load menu dari LocalStorage agar status stok tersimpan
 let localMenu = JSON.parse(localStorage.getItem('menu_stock')) || MENU;
 
-// Sinkronisasi ID (Jaga-jaga kalau kamu nambah menu baru di data.js, tapi localStorage masih data lama)
-// Jika panjang array beda, kita reset ke default data.js
+// SAFETY CHECK: Jika jumlah menu di data.js berubah (kamu nambah menu baru),
+// kita paksa reset localMenu agar tidak error karena data lama.
 if(localMenu.length !== MENU.length) {
     localMenu = MENU;
     localStorage.setItem('menu_stock', JSON.stringify(localMenu));
@@ -39,8 +39,7 @@ const els = {
   btnCloseReport: document.getElementById('close-report'),
   btnClearReport: document.getElementById('clear-report'),
   reportContent: document.getElementById('report-content'),
-  // Tombol Stok Baru
-  btnStockMode: document.getElementById('btn-stock-mode')
+  btnStockMode: document.getElementById('btn-stock-mode') // Tombol Baru
 };
 
 // --- HELPER STOK ---
@@ -51,51 +50,51 @@ function saveMenuStock() {
 window.toggleStockMode = () => {
     isStockMode = !isStockMode;
     
-    // Update Visual Tombol
-    const btn = document.getElementById('btn-stock-mode');
+    // Update Visual Tombol Navbar
+    const btn = els.btnStockMode;
     if(isStockMode) {
-        btn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
         btn.classList.remove('bg-bebyte-purple');
+        btn.classList.add('bg-red-600', 'text-white', 'animate-pulse');
         btn.innerHTML = "⚠️ EDIT STOK";
-        showAlert("MODE ATUR STOK", "Klik menu untuk ubah status HABIS/ADA.");
+        showAlert("MODE ATUR STOK", "Klik menu untuk mengubah status (HABIS / ADA).");
     } else {
-        btn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
+        btn.classList.remove('bg-red-600', 'text-white', 'animate-pulse');
         btn.classList.add('bg-bebyte-purple');
         btn.innerHTML = "📦 Stok";
     }
     renderMenu();
 };
 
-// --- RENDER MENU (LOGIC CASHIER VS STOCK) ---
+// --- RENDER MENU ---
 function renderMenu() {
-  // Ubah tampilan grid kalau lagi mode edit stok
+  // Ubah style grid jika sedang mode edit stok
   els.grid.className = isStockMode 
-    ? "grid grid-cols-2 sm:grid-cols-3 gap-4 border-4 border-red-500 p-2 rounded-xl bg-red-50 shadow-[0_0_15px_rgba(255,0,0,0.5)]" 
+    ? "grid grid-cols-2 sm:grid-cols-3 gap-4 border-4 border-red-500 p-2 rounded-xl bg-red-50" 
     : "grid grid-cols-2 sm:grid-cols-3 gap-4";
 
   els.grid.innerHTML = localMenu.map(m => {
-    // Logic Cek Ketersediaan
+    // 1. Cek Ketersediaan
     let isFullOOS = false;
     if (m.variants) {
-       // Kalau semua varian active=false, maka menu mati total
+       // Jika semua varian mati, maka menu mati total
        isFullOOS = m.variants.every(v => v.active === false);
     } else {
        isFullOOS = !m.active;
     }
 
-    // Visual Logic
+    // 2. Visual Logic
     const cardClass = isFullOOS ? "grayscale opacity-70" : "";
     
-    // Tentukan aksi tombol (Beli vs Edit Stok)
+    // 3. Tentukan Aksi Tombol
     let action, btnText, btnClass;
 
     if (isStockMode) {
-        // MODE EDIT
+        // -- MODE MANAGER --
         action = `toggleStock(${m.id})`;
         btnText = isFullOOS ? "SET: ADA" : "SET: HABIS";
-        btnClass = isFullOOS ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-red-500 text-white hover:bg-red-600";
+        btnClass = isFullOOS ? "bg-blue-500 text-white" : "bg-red-500 text-white";
     } else {
-        // MODE KASIR
+        // -- MODE KASIR --
         action = isFullOOS ? "" : `handleItemClick(${m.id})`;
         btnText = isFullOOS ? "HABIS ❌" : (m.variants ? 'PILIH ▾' : '+ ADD');
         btnClass = isFullOOS 
@@ -108,8 +107,7 @@ function renderMenu() {
       <div class="relative h-40 w-full overflow-hidden bg-gray-200">
         <img src="${m.img}" alt="${m.name}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
         ${isFullOOS ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 z-20"><span class="text-white font-black text-2xl border-4 border-white px-2 -rotate-12">HABIS!</span></div>' : ''}
-        
-        <div class="absolute top-2 right-2 bg-bebyte-purple text-white text-xs font-bold px-2 py-1 border-2 border-black rounded transform rotate-3 shadow-sm z-10">
+        <div class="absolute top-2 right-2 bg-bebyte-purple text-white text-xs font-bold px-2 py-1 border-2 border-black rounded z-10">
           ${m.category}
         </div>
       </div>
@@ -128,7 +126,7 @@ function renderMenu() {
   `}).join('');
 }
 
-// --- LOGIC STOCK MANAGEMENT ---
+// --- LOGIC STOCK (MANAGER) ---
 window.toggleStock = (id) => {
     const item = localMenu.find(x => x.id === id);
     if(item.variants) {
@@ -147,7 +145,7 @@ function openVariantStockModal(item) {
         class="w-full text-left px-4 py-3 border-2 border-black rounded-lg font-bold mb-2 flex justify-between items-center transition
         ${v.active ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'}">
         <span>${v.name}</span>
-        <span class="text-xs border border-black px-2 py-1 rounded bg-white">${v.active ? '✅ ADA' : '❌ HABIS'}</span>
+        <span class="text-xs border border-black px-2 py-1 rounded bg-white font-black">${v.active ? '✅ ADA' : '❌ HABIS'}</span>
       </button>
     `).join('');
     els.modalVariant.classList.remove('hidden');
@@ -158,11 +156,11 @@ window.toggleVariantStock = (id, vName) => {
     const variant = item.variants.find(v => v.name === vName);
     variant.active = !variant.active;
     saveMenuStock();
-    openVariantStockModal(item); // Refresh modal biar kelihatan updatenya
-    renderMenu(); // Refresh grid belakang
+    openVariantStockModal(item); 
+    renderMenu(); 
 };
 
-// --- LOGIC TRANSAKSI (KASIR) ---
+// --- LOGIC KASIR (CART) ---
 window.handleItemClick = (id) => {
   const item = localMenu.find(x => x.id === id);
   if (item.variants) openVariantModal(item);
@@ -172,7 +170,6 @@ window.handleItemClick = (id) => {
 function openVariantModal(item) {
   els.variantTitle.innerText = `Pilih Rasa ${item.name}`;
   els.variantOptions.innerHTML = item.variants.map(v => {
-      // Cek Active Status
       const isHabis = !v.active;
       const btnClass = isHabis 
         ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
@@ -181,8 +178,7 @@ function openVariantModal(item) {
       const clickAction = isHabis ? "" : `onclick="selectVariant(${item.id}, '${v.name}')"`;
 
       return `
-        <button ${clickAction} 
-          class="w-full text-left px-4 py-3 border-2 rounded-lg font-bold transition flex justify-between items-center ${btnClass}">
+        <button ${clickAction} class="w-full text-left px-4 py-3 border-2 rounded-lg font-bold transition flex justify-between items-center ${btnClass}">
           <span>${v.name} ${isHabis ? '(HABIS)' : ''}</span>
           ${!isHabis ? '<span class="opacity-0 group-hover:opacity-100 transition">➕</span>' : '<span>🚫</span>'}
         </button>
@@ -198,24 +194,17 @@ window.selectVariant = (id, variantName) => {
 };
 
 function addToCart(item, variantName) {
-  // Cari item di cart berdasarkan ID dan Nama Varian
   const existingItem = cart.find(x => x.id === item.id && x.variant === variantName);
   if (existingItem) existingItem.qty++;
   else {
-      // PENTING: Kita push object baru, jangan push referensi 'item' langsung karena 'item' ada property 'active' dll yg gak butuh di cart
       cart.push({ 
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          variant: variantName, 
-          qty: 1 
+          id: item.id, name: item.name, price: item.price, variant: variantName, qty: 1 
       });
   }
   updateCart();
 }
 
 window.updateQty = (id, variant, delta) => {
-  // Handle variant string null/"null" agar matching aman
   const vKey = variant === 'null' ? null : variant;
   const item = cart.find(x => x.id === id && x.variant === vKey);
   if(item) {
@@ -228,28 +217,22 @@ window.updateQty = (id, variant, delta) => {
 function updateCart() {
   localStorage.setItem('cart_temp', JSON.stringify(cart));
   els.cartCount.textContent = cart.reduce((a,b)=>a+b.qty,0);
-
+  
   els.cartList.innerHTML = cart.length ? cart.map(i => `
     <div class="flex justify-between items-center bg-white p-2 rounded border-2 border-black mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]">
       <div class="flex-1 pr-2">
         <div class="font-bold text-sm leading-tight text-black">
-          ${i.name} 
-          ${i.variant ? `<span class="text-bebyte-purple text-xs block mt-0.5">(${i.variant})</span>` : ''}
+          ${i.name} ${i.variant ? `<span class="text-bebyte-purple text-xs">(${i.variant})</span>` : ''}
         </div>
-        <div class="text-xs font-mono text-gray-500 mt-1">${fmt(i.price)} x ${i.qty}</div>
+        <div class="text-xs font-mono text-gray-500">${fmt(i.price)} x ${i.qty}</div>
       </div>
       <div class="flex items-center gap-1">
-        <button onclick="updateQty(${i.id}, '${i.variant}', -1)" class="w-6 h-6 flex items-center justify-center bg-gray-200 text-black border border-black rounded hover:bg-gray-300 font-bold">-</button>
+        <button onclick="updateQty(${i.id}, '${i.variant}', -1)" class="w-6 h-6 bg-gray-200 border border-black rounded font-bold">-</button>
         <span class="text-sm font-bold w-5 text-center">${i.qty}</span>
-        <button onclick="updateQty(${i.id}, '${i.variant}', 1)" class="w-6 h-6 flex items-center justify-center bg-bebyte-purple text-white border border-black rounded hover:bg-purple-700 font-bold">+</button>
+        <button onclick="updateQty(${i.id}, '${i.variant}', 1)" class="w-6 h-6 bg-bebyte-purple text-white border border-black rounded font-bold">+</button>
       </div>
     </div>
-  `).join('') : `
-    <div class="text-center py-6 opacity-50">
-        <div class="text-4xl mb-2">🍽️</div>
-        <p class="font-bold text-sm">Empty Plate!</p>
-    </div>
-  `;
+  `).join('') : `<div class="text-center py-6 opacity-50"><p class="font-bold text-sm">Kosong...</p></div>`;
 
   const total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
   els.total.textContent = fmt(total);
@@ -266,78 +249,71 @@ document.getElementById('close-variant').addEventListener('click', () => els.mod
 els.btnCloseReport.addEventListener('click', () => els.modalReport.classList.add('hidden'));
 els.btnClearReport.addEventListener('click', clearReport);
 
-// --- SEND HANDLER ---
+// --- SEND HANDLER (CHECKOUT) ---
 els.btnSend.addEventListener('click', async () => {
-  if(!cart.length) return showAlert("KERANJANG KOSONG", "Oi! Pilih menu dulu sebelum bayar dong!");
+  if(!cart.length) return showAlert("OIT!", "Pilih menu dulu dong!");
   const custName = els.custName.value.trim();
-  if(!custName) {
-      els.custName.focus();
-      return showAlert("SIAPA NI?", "Nama pemesan wajib diisi ya bro!");
-  }
+  if(!custName) { els.custName.focus(); return showAlert("SIAPA?", "Isi nama pemesan dulu!"); }
 
   const total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
   const note = els.note.value;
   els.btnSend.disabled = true;
   els.btnSend.textContent = "SENDING...";
 
-  // Format nama item untuk laporan
-  const itemsForReport = cart.map(i => ({
-    ...i,
-    name: i.variant ? `${i.name} (${i.variant})` : i.name
-  }));
-  const customerInfo = { name: custName.toUpperCase() };
+  const itemsReport = cart.map(i => ({...i, name: i.variant ? `${i.name} (${i.variant})` : i.name}));
+  const customer = { name: custName.toUpperCase() };
 
-  const trxId = saveTransaction(itemsForReport, total, note, customerInfo);
-  const disc = await sendToDiscord(itemsForReport, total, note, trxId, customerInfo);
+  const trxId = saveTransaction(itemsReport, total, note, customer);
+  const disc = await sendToDiscord(itemsReport, total, note, trxId, customer);
 
   if(disc.success) {
-    showAlert("SIAP SAJI!", `Pesanan ${custName} berhasil dikirim!`);
-    cart = [];
-    els.note.value = '';
-    els.custName.value = '';
+    showAlert("BERHASIL!", `Pesanan ${custName} terkirim!`);
+    cart = []; els.note.value = ''; els.custName.value = '';
     updateCart();
   } else {
-    showAlert("ERROR", "Gagal kirim ke Discord, tapi data aman di Admin.");
+    showAlert("OFFLINE?", "Gagal kirim ke Discord, tapi data tersimpan di Admin.");
   }
   els.btnSend.disabled = false;
   els.btnSend.textContent = "CHECKOUT NOW ➤";
 });
 
-// --- REPORT HANDLER ---
+// --- REPORT & PDF HANDLER ---
 els.btnReport.addEventListener('click', () => {
   try {
     const data = getReport();
-    const topItemsHtml = Object.keys(data.itemCounts).length > 0 
-      ? Object.entries(data.itemCounts)
-          .sort(([,a], [,b]) => b - a)
-          .map(([name, qty]) => 
-            `<li class="flex justify-between border-b border-dashed border-gray-300 pb-1">
-              <span class="capitalize text-black">${name.toLowerCase()}</span>
-              <span class="font-bold bg-bebyte-yellow px-2 rounded-sm border border-black text-xs flex items-center">${qty} sold</span>
-            </li>`
-          ).join('')
-      : '<li class="text-gray-400 text-center italic py-2">Belum ada penjualan.</li>';
+    const today = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
+    const topItems = Object.keys(data.itemCounts).length 
+      ? Object.entries(data.itemCounts).sort(([,a], [,b]) => b - a)
+          .map(([n, q]) => `<li class="flex justify-between border-b border-gray-300 pb-1 mb-1"><span class="capitalize">${n}</span><span class="font-bold">${q} sold</span></li>`).join('')
+      : '<li class="text-center italic">Belum ada data.</li>';
 
     els.reportContent.innerHTML = `
+      <div class="text-center mb-6 border-b-4 border-black pb-4">
+        <h2 class="font-black text-3xl uppercase tracking-widest">BeByte Report</h2>
+        <p class="text-sm font-bold text-gray-600">Technopreneurship 5.0 Bazaar</p>
+        <p class="text-xs text-gray-500 mt-1">${today}</p>
+      </div>
       <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="bg-gray-100 p-3 rounded border-2 border-black text-center shadow-sm">
-          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Revenue</div>
-          <div class="text-xl font-black text-bebyte-purple">${fmt(data.totalOmset)}</div>
+        <div class="bg-white p-3 border-2 border-black text-center">
+          <div class="text-xs font-bold uppercase">Pendapatan</div>
+          <div class="text-xl font-black mt-1">${fmt(data.totalOmset)}</div>
         </div>
-        <div class="bg-gray-100 p-3 rounded border-2 border-black text-center shadow-sm">
-          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">Orders</div>
-          <div class="text-xl font-black text-bebyte-purple">${data.totalTrx}</div>
+        <div class="bg-white p-3 border-2 border-black text-center">
+          <div class="text-xs font-bold uppercase">Transaksi</div>
+          <div class="text-xl font-black mt-1">${data.totalTrx}</div>
         </div>
       </div>
-      <h4 class="font-bold mb-2 text-sm uppercase tracking-wide text-bebyte-purple border-b-2 border-black pb-1 inline-block">🔥 Top Items:</h4>
-      <ul class="space-y-2 text-sm max-h-40 overflow-y-auto pr-1 custom-scroll">${topItemsHtml}</ul>
+      <h4 class="font-bold mb-3 text-sm uppercase border-b-2 border-black inline-block">🔥 Rincian Produk:</h4>
+      <ul class="space-y-1 text-sm mb-8">${topItems}</ul>
+      <div class="text-center text-xs font-bold italic border-t-2 border-black border-dashed pt-4">"System by Raydamar v2.0"</div>
     `;
     els.modalReport.classList.remove('hidden');
-  } catch (err) {
-    console.error(err);
-    showAlert("ERROR", "Gagal memuat laporan.");
-  }
+  } catch (e) { console.error(e); showAlert("ERROR", "Gagal buka laporan."); }
 });
+
+// LISTENER TOMBOL PRINT PDF
+document.getElementById('btn-print-pdf').addEventListener('click', () => window.print());
 
 // INIT
 renderMenu();
