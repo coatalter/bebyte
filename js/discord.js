@@ -5,7 +5,6 @@ const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency:
 export async function sendToDiscord(cart, total, note, trxId) {
   if (!CONFIG.WEBHOOK_URL) return { success: false, msg: "Webhook URL kosong" };
 
-  // Format text item supaya rapi di Discord
   const itemsList = cart.map(i => `**${i.qty}x** ${i.name} (${fmt(i.price * i.qty)})`).join('\n');
 
   const payload = {
@@ -38,5 +37,6 @@ export async function sendToDiscord(cart, total, note, trxId) {
     return { success: false, msg: err };
   }
 }
+
 
 // https://discord.com/api/webhooks/1441533794224967730/9nSnB7dKxyGBnrx7-da0dcioAUIs6MpP_Lu-FCQbd6cdky34ykRkHHl9ka8GI-qrGkjO
