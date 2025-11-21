@@ -3,7 +3,7 @@ export const CONFIG = {
   STORE_NAME: 'BeByte'
 };
 
-// active: true (ADA), active: false (HABIS)
+
 export const MENU = [
   { 
     id: 1, 
