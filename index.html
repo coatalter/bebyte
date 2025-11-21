@@ -11,10 +11,10 @@
         extend: {
           colors: {
             bebyte: {
-              purple: '#6D28D9', 
-              yellow: '#FFE100', 
-              dark: '#1e1b4b',   
-              green: '#4ade80'   
+              purple: '#6D28D9', // Warna Ungu Utama
+              yellow: '#FFE100', // Warna Kuning Aksen
+              dark: '#1e1b4b',   // Warna Teks Gelap
+              green: '#4ade80'   // Warna Dino
             }
           },
           fontFamily: {
@@ -29,14 +29,19 @@
 </head>
 <body class="min-h-screen text-bebyte-dark pb-10">
   
-  <nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
+<nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <img src="assets/bebyte-logo.png" alt="BeByte Logo" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
+        <img src="assets/bebyte-logo.png" alt="Logo" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition drop-shadow-[2px_2px_0px_black]">
       </div>
-      <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all rounded-lg">
-        🔒 Admin
-      </button>
+      <div class="flex gap-2">
+          <button id="btn-stock-mode" onclick="toggleStockMode()" class="bg-bebyte-purple text-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">
+            📦 Stok
+          </button>
+          <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">
+            🔒 Admin
+          </button>
+      </div>
     </div>
   </nav>
 
@@ -133,18 +138,21 @@
     </div>
   </div>
 
-  <div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-md shadow-2xl overflow-hidden">
-        <div class="bg-bebyte-purple p-4 flex justify-between items-center">
+<div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-md shadow-2xl overflow-hidden relative">
+        <div class="bg-bebyte-purple p-4 flex justify-between items-center print:hidden">
             <h3 class="text-white font-black text-xl">DAILY REPORT</h3>
             <button id="close-report" class="text-white font-bold hover:text-bebyte-yellow text-2xl">&times;</button>
         </div>
-        <div id="report-content" class="p-6"></div>
-        <div class="p-4 border-t-2 border-gray-200 bg-gray-50 flex justify-end">
-            <button id="clear-report" class="text-red-600 font-bold text-sm hover:underline">RESET DATABASE</button>
+        <div id="report-content" class="p-6 bg-white"></div>
+        <div class="modal-footer p-4 border-t-2 border-gray-200 bg-gray-50 flex justify-between items-center">
+            <button id="clear-report" class="text-red-600 font-bold text-xs hover:underline">RESET DATABASE</button>
+            <button id="btn-print-pdf" class="bg-bebyte-dark text-white border-2 border-black px-4 py-2 rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] transition flex items-center gap-2">
+                🖨️ SAVE PDF
+            </button>
         </div>
     </div>
-  </div>
+  </div>  
 
   <script type="module" src="js/app.js"></script>
 </body>
