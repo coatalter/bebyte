@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Bangers&display=swap');
+
+:root {
+    --bebyte-purple: #6D28D9;
+    --bebyte-yellow: #FFE100;
+    --bebyte-dark: #2e1065;
+    --bebyte-green: #4ade80; /* Warna Dino */
+}
+
+body {
+    font-family: 'Fredoka', sans-serif;
+    background-color: var(--bebyte-purple);
+    /* Pattern simple biar gak polos */
+    background-image: radial-gradient(var(--bebyte-yellow) 1px, transparent 1px);
+    background-size: 20px 20px; 
+}
+
+/* Header Font ala Poster */
+h1, h2, h3, .brand-font {
+    font-family: 'Fredoka', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Custom Scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Efek Kartu Timbul (Neubrutalism Lite) */
+.card-pop {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid black;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+.card-pop:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+}
+.card-pop:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+}
+
+/* Image Styling */
+.menu-img {
+    height: 160px; /* Tinggi fix biar rapi */
+    width: 100%;
+    object-fit: cover;
+    border-bottom: 3px solid black;
+    transition: transform 0.3s ease;
+}
+
+/* Pastikan container card full height */
+.card-pop {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Penting agar sejajar */
+}
