@@ -12,7 +12,15 @@ const els = {
   cartCount: document.getElementById('cart-count'),
   total: document.getElementById('total'),
   note: document.getElementById('note'),
+  custName: document.getElementById('customer-name'), // Input Nama
   btnSend: document.getElementById('btn-send'),
+  
+  // Custom Alert Elements
+  alertModal: document.getElementById('custom-alert'),
+  alertTitle: document.getElementById('alert-title'),
+  alertMsg: document.getElementById('alert-msg'),
+  btnAlertOk: document.getElementById('btn-alert-ok'),
+
   // Modal Elements
   modalReport: document.getElementById('modal-report'),
   modalVariant: document.getElementById('modal-variant'),
@@ -23,6 +31,13 @@ const els = {
   btnClearReport: document.getElementById('clear-report'),
   reportContent: document.getElementById('report-content')
 };
+
+window.showAlert = (title, msg) => {
+    els.alertTitle.innerText = title;
+    els.alertMsg.innerText = msg;
+    els.alertModal.classList.remove('hidden');
+};
+els.btnAlertOk.addEventListener('click', () => els.alertModal.classList.add('hidden'));
 
 // --- RENDER MENU ---
 function renderMenu() {
@@ -37,12 +52,9 @@ function renderMenu() {
       
       <div class="p-3 flex flex-col flex-grow">
         <h3 class="font-black text-lg text-black leading-tight mb-1 uppercase">${m.name}</h3>
-        
         <div class="flex-grow"></div> 
-        
         <div class="flex justify-between items-end mt-3 pt-2 border-t-2 border-dashed border-gray-200">
           <span class="font-bold text-bebyte-purple bg-purple-100 px-2 py-1 rounded border border-purple-200 text-sm">${fmt(m.price)}</span>
-          
           <button onclick="handleItemClick(${m.id})" class="bg-bebyte-green text-black border-2 border-black px-4 py-1 rounded-lg font-bold text-sm hover:bg-green-400 transition shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none flex items-center gap-1">
             ${m.variants ? 'PILIH ▾' : '+ ADD'}
           </button>
@@ -53,19 +65,12 @@ function renderMenu() {
 }
 
 // --- LOGIC VARIANT & CART ---
-
-// 1. Handle Klik (Cek Varian)
 window.handleItemClick = (id) => {
   const item = MENU.find(x => x.id === id);
-  
-  if (item.variants && item.variants.length > 0) {
-    openVariantModal(item);
-  } else {
-    addToCart(item, null);
-  }
+  if (item.variants && item.variants.length > 0) openVariantModal(item);
+  else addToCart(item, null);
 };
 
-// 2. Buka Modal Varian
 function openVariantModal(item) {
   els.variantTitle.innerText = `Pilih Rasa ${item.name}`;
   els.variantOptions.innerHTML = item.variants.map(v => `
@@ -78,38 +83,24 @@ function openVariantModal(item) {
   els.modalVariant.classList.remove('hidden');
 }
 
-// 3. Pilih Varian & Tutup Modal
 window.selectVariant = (id, variantName) => {
   const item = MENU.find(x => x.id === id);
   addToCart(item, variantName);
   els.modalVariant.classList.add('hidden');
 };
 
-// 4. Masukkan ke Cart (Core Logic) 
 function addToCart(item, variant) {
   const existingItem = cart.find(x => x.id === item.id && x.variant === variant);
-
-  if (existingItem) {
-    existingItem.qty++;
-  } else {
-    cart.push({
-      ...item,
-      variant: variant, 
-      qty: 1
-    });
-  }
+  if (existingItem) existingItem.qty++;
+  else cart.push({ ...item, variant: variant, qty: 1 });
   updateCart();
 }
 
-// 5. Update Cart UI
 window.updateQty = (id, variant, delta) => {
   const item = cart.find(x => x.id === id && x.variant === variant);
-  
   if(item) {
     item.qty += delta;
-    if(item.qty <= 0) {
-      cart = cart.filter(x => !(x.id === id && x.variant === variant));
-    }
+    if(item.qty <= 0) cart = cart.filter(x => !(x.id === id && x.variant === variant));
     updateCart();
   }
 };
@@ -144,45 +135,53 @@ function updateCart() {
   els.total.textContent = fmt(total);
 }
 
-// --- SEND HANDLER ---
+// --- SEND HANDLER 
 els.btnSend.addEventListener('click', async () => {
-  if(!cart.length) return alert("Oi! Order something first!");
+  if(!cart.length) return showAlert("KERANJANG KOSONG", "Oi! Pilih menu dulu sebelum bayar dong!");
+  
+  const custName = els.custName.value.trim();
+  if(!custName) {
+      els.custName.focus();
+      return showAlert("SIAPA NI?", "Nama pemesan wajib diisi ya bro!");
+  }
+
   const total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
   const note = els.note.value;
   
   els.btnSend.disabled = true;
   els.btnSend.textContent = "SENDING...";
 
-  // Include Variants in Discord Message
   const itemsForReport = cart.map(i => ({
     ...i,
     name: i.variant ? `${i.name} (${i.variant})` : i.name
   }));
 
-  const trxId = saveTransaction(itemsForReport, total, note);
-  const disc = await sendToDiscord(itemsForReport, total, note, trxId);
+  const customerInfo = { name: custName }; // Hanya Nama
+
+  const trxId = saveTransaction(itemsForReport, total, note, customerInfo);
+  const disc = await sendToDiscord(itemsForReport, total, note, trxId, customerInfo);
 
   if(disc.success) {
-    alert(`BeByte Order Sent! ID: #${trxId.toString().slice(-4)}`);
+    showAlert("SIAP SAJI!", `Pesanan kak ${custName} berhasil dikirim ke dapur!`);
     cart = [];
     els.note.value = '';
+    els.custName.value = '';
     updateCart();
   } else {
-    alert("Discord Error! Data saved locally.");
+    showAlert("ERROR", "Gagal kirim ke Discord, tapi data aman di Admin.");
   }
+  
   els.btnSend.disabled = false;
   els.btnSend.textContent = "CHECKOUT NOW ➤";
 });
 
-// --- REPORT HANDLER 
+// --- REPORT HANDLER ---
 els.btnReport.addEventListener('click', () => {
   try {
     const data = getReport();
-    
-    // Logic render Top Items
     const topItemsHtml = Object.keys(data.itemCounts).length > 0 
       ? Object.entries(data.itemCounts)
-          .sort(([,a], [,b]) => b - a) // Urutkan qty terbesar
+          .sort(([,a], [,b]) => b - a)
           .map(([name, qty]) => 
             `<li class="flex justify-between border-b border-dashed border-gray-300 pb-1">
               <span class="capitalize text-black">${name.toLowerCase()}</span>
@@ -207,19 +206,16 @@ els.btnReport.addEventListener('click', () => {
         ${topItemsHtml}
       </ul>
     `;
-    
     els.modalReport.classList.remove('hidden');
   } catch (err) {
-    console.error("Error render report:", err);
-    alert("Gagal memuat laporan. Cek Console F12.");
+    console.error(err);
+    showAlert("ERROR", "Gagal memuat laporan.");
   }
 });
 
-// Modal Handlers
 document.getElementById('close-variant').addEventListener('click', () => els.modalVariant.classList.add('hidden'));
 els.btnCloseReport.addEventListener('click', () => els.modalReport.classList.add('hidden'));
 els.btnClearReport.addEventListener('click', clearReport);
 
-// Init
 renderMenu();
 updateCart();
