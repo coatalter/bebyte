@@ -1,5 +1,5 @@
 export const CONFIG = {
-  WEBHOOK_URL: 'https://discord.com/api/webhooks/1379872460869996775/lBbzeTPD4TqX4E-uqevXtHTpNW7YZYkekdFpxYTXcVksT6jXoCam_IsdkFASit2X6nJY',
+  WEBHOOK_URL: 'https://discord.com/api/webhooks/1441533794224967730/9nSnB7dKxyGBnrx7-da0dcioAUIs6MpP_Lu-FCQbd6cdky34ykRkHHl9ka8GI-qrGkjO',
   STORE_NAME: 'BeByte'
 };
 
@@ -45,3 +45,4 @@ export const MENU = [
     variants: ['Mix', 'BBQ', 'Balado']
   },
 ];
+
