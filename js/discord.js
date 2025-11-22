@@ -10,7 +10,7 @@ export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
 
   const payload = {
     username: CONFIG.STORE_NAME,
-    avatar_url: "https://i.imgur.com/HuX8pXp.png", 
+    avatar_url: "./assets/discordpfp.png", 
     embeds: [
       {
         title: `🔥 Pesanan Baru #${trxId.toString().slice(-4)}`,
