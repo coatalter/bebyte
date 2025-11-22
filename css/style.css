@@ -29,100 +29,109 @@ body {
 .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
 .custom-scroll::-webkit-scrollbar-thumb { background: #6D28D9; border-radius: 4px; }
 
-/* ANIMASI */
 @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
 .animate-fade { animation: fadeEffect 0.2s ease-out forwards; }
 
 @keyframes popEffect { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-.animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; -webkit-animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
+.animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
 @media print {
-    @page { size: auto; margin: 5mm; } 
-    
-    /* Reset Body */
-    body { 
-        visibility: hidden;
-        overflow: visible !important; 
-        height: auto !important; 
-        background: white !important;
+    @page { 
+        size: A4; 
+        margin: 10mm; 
+    } 
+
+    html, body {
+        height: auto !important;
+        min-height: 0 !important;
         margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: white !important;
     }
-    
-    /* Sembunyikan elemen lain */
-    body > *:not(#modal-report) { display: none !important; }
-    
-    /* RESET TOTAL MODAL REPORT */
+
+    body > *:not(#modal-report) { 
+        display: none !important; 
+    }
+
     #modal-report {
-        visibility: visible !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: auto !important;
-        max-height: none !important; /* KUNCI: Matikan batas tinggi */
-        overflow: visible !important; /* KUNCI: Matikan scroll */
-        display: block !important;
+        min-height: 0 !important;
+        max-height: none !important;
         background: white !important;
         border: none !important;
         box-shadow: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        transform: none !important;
+        display: block !important; 
+        overflow: visible !important;
         z-index: 9999 !important;
-    }
-
-    /* RESET CONTAINER DI DALAM MODAL */
-    /* Ini menargetkan div pembungkus (yang ada class flex-col dll) */
-    #modal-report > div {
-        max-height: none !important;
-        height: auto !important;
-        overflow: visible !important;
-        box-shadow: none !important;
-        border: none !important;
-        position: static !important;
-        display: block !important;
-    }
-
-    /* RESET KONTEN TABEL */
-    #report-content {
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-        display: block !important;
         padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* Paksa tabel melebar dan memanjang */
-    .overflow-x-auto, .custom-scroll {
-        overflow: visible !important;
+    #modal-report > div, 
+    #report-content,
+    .custom-scroll {
+        position: static !important;
         height: auto !important;
+        min-height: 0 !important;
         max-height: none !important;
+        width: 100% !important;
+        overflow: visible !important;
+        display: block !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* Sembunyikan tombol-tombol navigasi saat print */
-    #close-report, #btn-reset-db, #btn-print-pdf, .pagination-controls, .modal-footer { 
+    thead { 
+        display: table-header-group;
+    }
+    
+    tfoot { 
+        display: table-footer-group; 
+    }
+
+    tr { 
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    #close-report, 
+    #btn-reset-db, 
+    #btn-backup, 
+    #btn-print-pdf, 
+    .pagination-controls, 
+    .modal-footer,
+    .sticky {
         display: none !important; 
     }
 
-    /* Styling Tabel Cetak */
     table { 
         width: 100% !important; 
         border-collapse: collapse; 
-        table-layout: fixed; /* Agar kolom rapi */
+        font-size: 11pt;
     }
     
-    th, td { 
-        border: 1px solid #000 !important; 
-        padding: 8px !important; 
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 5px !important;
         color: black !important;
-        font-size: 10pt !important; /* Ukuran font hemat kertas */
-        white-space: normal !important; /* Text wrap nyala */
     }
 
-    /* Mencegah baris terpotong di tengah halaman */
-    tr { page-break-inside: avoid; page-break-after: auto; }
-    thead { display: table-header-group; }
-    tfoot { display: table-footer-group; }
+    tr:nth-child(even) { background-color: transparent !important; }
+    tr:nth-child(odd) { background-color: transparent !important; }
+    
+    thead th {
+        background-color: #ddd !important;
+        font-weight: bold !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+
+    ::-webkit-scrollbar { display: none; }
 }
