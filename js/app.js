@@ -59,7 +59,6 @@ const els = {
   reportContent: document.getElementById('report-content'),
   btnReport: document.getElementById('btn-report'),
   btnCloseReport: document.getElementById('close-report'),
-  // UPDATE: Pastikan ini sesuai ID di HTML baru
   btnResetDB: document.getElementById('btn-reset-db'), 
   btnStockMode: document.getElementById('btn-stock-mode'),
   modalVariant: document.getElementById('modal-variant'),
@@ -156,12 +155,91 @@ window.changeReportPage = (delta) => {
 function renderReportTable() {
     const data = getReport();
     const history = data.history.sort((a,b) => b.id - a.id); 
-    let currentData; let paginationControls = '';
-    if (isPrintingMode) { currentData = history; paginationControls = ''; } else { const totalPages = Math.ceil(history.length / itemsPerPage); if (history.length > 0 && reportPage > totalPages) reportPage = 1; const startIndex = (reportPage - 1) * itemsPerPage; const endIndex = startIndex + itemsPerPage; currentData = history.slice(startIndex, endIndex); paginationControls = `<div class="pagination-controls flex justify-between items-center mt-4 pt-2 border-t border-gray-200"><span class="text-xs text-gray-500 font-bold">Halaman ${reportPage} dari ${totalPages || 1}</span><div class="flex gap-2"><button onclick="changeReportPage(-1)" class="px-3 py-1 border border-black rounded text-xs font-bold hover:bg-gray-200 disabled:opacity-50" ${reportPage === 1 ? 'disabled' : ''}>&lt; Prev</button><button onclick="changeReportPage(1)" class="px-3 py-1 border border-black rounded text-xs font-bold hover:bg-gray-200 disabled:opacity-50" ${reportPage >= totalPages ? 'disabled' : ''}>Next &gt;</button></div></div>`; }
-    const headerHtml = `<div class="mb-4"><h2 class="font-bold text-3xl mb-1">Riwayat Transaksi</h2><div class="flex gap-4 text-sm text-gray-600"><div class="bg-green-50 px-3 py-1 rounded border border-green-200 text-green-800 font-bold">Total: ${fmt(data.totalOmset)}</div><div class="bg-blue-50 px-3 py-1 rounded border border-blue-200 text-blue-800 font-bold">${data.totalTrx} Transaksi</div></div></div>`;
-    const tableHeader = `<thead class="bg-gray-100 text-gray-600 text-xs uppercase font-bold text-left"><tr><th class="px-4 py-3 rounded-tl-lg">Waktu</th><th class="px-4 py-3">ID</th><th class="px-4 py-3">Pembeli & Note</th><th class="px-4 py-3 w-1/3">Item</th><th class="px-4 py-3">Metode</th><th class="px-4 py-3 rounded-tr-lg text-right">Total</th></tr></thead>`;
-    const tableRows = currentData.map((tx, index) => { const itemsSummary = tx.items.map(i => `<div class="font-bold text-xs text-black">• ${i.qty}x ${i.name}</div>`).join(''); const rowColor = index % 2 === 0 ? 'bg-white' : 'bg-gray-50'; const methodBadge = tx.customer.method === 'QRIS' ? '<span class="text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded border border-blue-100">QRIS</span>' : '<span class="text-green-600 font-bold bg-green-50 px-2 py-1 rounded border border-green-100">TUNAI</span>'; const noteDisplay = tx.note ? `<div class="text-[10px] text-gray-500 italic mt-1">"${tx.note}"</div>` : ''; return `<tr class="${rowColor} border-b border-gray-200 hover:bg-gray-100 transition"><td class="px-4 py-3 text-xs font-medium text-gray-500 align-top whitespace-nowrap">${new Date(tx.id).toLocaleDateString('id-ID')}<br><span class="text-[10px]">${new Date(tx.id).toLocaleTimeString('id-ID')}</span></td><td class="px-4 py-3 text-xs text-bebyte-purple font-bold align-top">#${tx.id.toString().slice(-4)}</td><td class="px-4 py-3 align-top"><div class="font-bold text-sm text-black uppercase">${tx.customer.name}</div>${noteDisplay}</td><td class="px-4 py-3 align-top">${itemsSummary}</td><td class="px-4 py-3 text-xs align-top">${methodBadge}</td><td class="px-4 py-3 text-sm font-bold text-black text-right align-top">${fmt(tx.total)}</td></tr>`; }).join('');
-    els.reportContent.innerHTML = `${headerHtml}<div class="overflow-x-auto rounded-lg border border-gray-200"><table class="w-full">${tableHeader}<tbody>${tableRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data</td></tr>'}</tbody></table></div>${paginationControls}`;
+    
+    let currentData; 
+    let paginationControls = '';
+
+    if (isPrintingMode) {
+        currentData = history; 
+        paginationControls = ''; 
+    } else {
+        const totalPages = Math.ceil(history.length / itemsPerPage);
+        if (history.length > 0 && reportPage > totalPages) reportPage = 1;
+        const startIndex = (reportPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        currentData = history.slice(startIndex, endIndex);
+
+        paginationControls = `
+            <div class="pagination-controls flex justify-between items-center mt-4 pt-2 border-t border-gray-200 shrink-0">
+                <span class="text-xs text-gray-500 font-bold">Halaman ${reportPage} dari ${totalPages || 1}</span>
+                <div class="flex gap-2">
+                    <button onclick="changeReportPage(-1)" class="px-3 py-1 border border-black rounded text-xs font-bold hover:bg-gray-200 disabled:opacity-50" ${reportPage === 1 ? 'disabled' : ''}>&lt; Prev</button>
+                    <button onclick="changeReportPage(1)" class="px-3 py-1 border border-black rounded text-xs font-bold hover:bg-gray-200 disabled:opacity-50" ${reportPage >= totalPages ? 'disabled' : ''}>Next &gt;</button>
+                </div>
+            </div>`;
+    }
+
+    const headerHtml = `
+        <div class="mb-4 shrink-0">
+            <h2 class="font-bold text-3xl mb-1">Riwayat Transaksi</h2>
+            <div class="flex gap-4 text-sm text-gray-600">
+                <div class="bg-green-50 px-3 py-1 rounded border border-green-200 text-green-800 font-bold">Total: ${fmt(data.totalOmset)}</div>
+                <div class="bg-blue-50 px-3 py-1 rounded border border-blue-200 text-blue-800 font-bold">${data.totalTrx} Transaksi</div>
+            </div>
+        </div>`;
+
+    const tableHeader = `
+        <thead class="bg-gray-100 text-gray-600 text-xs uppercase font-bold text-left sticky top-0 z-10">
+            <tr>
+                <th class="px-4 py-3 rounded-tl-lg border-b-2 border-gray-200 bg-gray-100">Waktu</th>
+                <th class="px-4 py-3 border-b-2 border-gray-200 bg-gray-100">ID</th>
+                <th class="px-4 py-3 border-b-2 border-gray-200 bg-gray-100">Pembeli & Note</th>
+                <th class="px-4 py-3 w-1/3 border-b-2 border-gray-200 bg-gray-100">Item</th>
+                <th class="px-4 py-3 border-b-2 border-gray-200 bg-gray-100">Metode</th>
+                <th class="px-4 py-3 rounded-tr-lg text-right border-b-2 border-gray-200 bg-gray-100">Total</th>
+            </tr>
+        </thead>`;
+
+    const tableRows = currentData.map((tx, index) => {
+        // Batasi tinggi list item jika terlalu panjang dalam satu baris
+        const itemsSummary = tx.items.map(i => `<div class="font-bold text-xs text-black whitespace-nowrap">• ${i.qty}x ${i.name}</div>`).join('');
+        
+        const rowColor = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+        const methodBadge = tx.customer.method === 'QRIS' ? '<span class="text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded border border-blue-100">QRIS</span>' : '<span class="text-green-600 font-bold bg-green-50 px-2 py-1 rounded border border-green-100">TUNAI</span>';
+        const noteDisplay = tx.note ? `<div class="text-[10px] text-gray-500 italic mt-1 truncate max-w-[150px]">"${tx.note}"</div>` : '';
+
+        return `
+        <tr class="${rowColor} border-b border-gray-200 hover:bg-gray-100 transition group">
+            <td class="px-4 py-3 text-xs font-medium text-gray-500 align-top whitespace-nowrap">
+                ${new Date(tx.id).toLocaleDateString('id-ID')}<br><span class="text-[10px]">${new Date(tx.id).toLocaleTimeString('id-ID')}</span>
+            </td>
+            <td class="px-4 py-3 text-xs text-bebyte-purple font-bold align-top">#${tx.id.toString().slice(-4)}</td>
+            <td class="px-4 py-3 align-top">
+                <div class="font-bold text-sm text-black uppercase truncate max-w-[120px]">${tx.customer.name}</div>
+                ${noteDisplay}
+            </td>
+            <td class="px-4 py-3 align-top">
+                <div class="max-h-[100px] overflow-y-auto custom-scroll pr-1">
+                    ${itemsSummary}
+                </div>
+            </td>
+            <td class="px-4 py-3 text-xs align-top">${methodBadge}</td>
+            <td class="px-4 py-3 text-sm font-bold text-black text-right align-top">${fmt(tx.total)}</td>
+        </tr>`;
+    }).join('');
+
+    const containerClass = isPrintingMode ? "" : "max-h-[50vh] overflow-y-auto custom-scroll border border-gray-200 rounded-lg";
+
+    els.reportContent.innerHTML = `
+        ${headerHtml}
+        <div class="${containerClass}">
+            <table class="w-full">
+                ${tableHeader}
+                <tbody>${tableRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data</td></tr>'}</tbody>
+            </table>
+        </div>
+        ${paginationControls}
+    `;
 }
 
 els.btnReport.addEventListener('click', () => { isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
