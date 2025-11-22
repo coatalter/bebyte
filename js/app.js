@@ -228,7 +228,9 @@ function renderReportTable() {
         </tr>`;
     }).join('');
 
-    const containerClass = isPrintingMode ? "" : "max-h-[50vh] overflow-y-auto custom-scroll border border-gray-200 rounded-lg";
+const containerClass = isPrintingMode 
+        ? "" 
+        : "max-h-[50vh] overflow-y-auto custom-scroll border border-gray-200 rounded-lg";
 
     els.reportContent.innerHTML = `
         ${headerHtml}
