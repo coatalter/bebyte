@@ -1,11 +1,11 @@
 import { CONFIG } from './data.js';
 
-const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(v);
+const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v);
 
 export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
   if (!CONFIG.WEBHOOK_URL) return { success: false, msg: "Webhook URL kosong" };
 
-  const itemsList = cart.map(i => `**${i.qty}x** ${i.name} (${fmt(i.price * i.qty)})`).join('\n');
+  const itemsList = cart.map(i => `**${i.qty}x** ${i.name}`).join('\n');
   const custDisplay = `**${customerInfo.name}**`; 
 
   const payload = {
@@ -15,11 +15,11 @@ export async function sendToDiscord(cart, total, note, trxId, customerInfo) {
       {
         title: `🔥 Pesanan Baru #${trxId.toString().slice(-4)}`,
         description: `Pemesan: ${custDisplay}`, 
-        color: 16769280, // Warna Kuning BeByte
+        color: 16769280,
         fields: [
           { name: "Menu", value: itemsList ? itemsList : "-", inline: false },
           { name: "Notes", value: note || "-", inline: true },
-          { name: "Payment", value: `${customerInfo.method}\nTotal: **${fmt(total)}**`, inline: true }
+          { name: "Payment", value: `${customerInfo.method}\n**${fmt(total)}**`, inline: true }
         ],
         footer: { text: `BeByte Bazaar • ${new Date().toLocaleTimeString('id-ID')}` },
         timestamp: new Date().toISOString()

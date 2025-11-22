@@ -32,8 +32,7 @@ export function getReport() {
     history.forEach(tx => {
       if(Array.isArray(tx.items)) {
         tx.items.forEach(item => {
-          let fullName = item.name;
-          if (item.variant && !fullName.includes('(')) { fullName = `${item.name} (${item.variant})`; }
+          let fullName = item.nickname || item.name;
           itemCounts[fullName] = (itemCounts[fullName] || 0) + item.qty;
         });
       }
@@ -44,9 +43,9 @@ export function getReport() {
   }
 }
 
-export function clearReport() {
-  if(confirm('RESET DATABASE?\nData penjualan akan dihapus permanen!')) {
+export function clearReportData() {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('menu_stock');
+    localStorage.removeItem('cart_temp');
     window.location.reload();
-  }
 }
