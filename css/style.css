@@ -29,26 +29,58 @@ body {
 .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
 .custom-scroll::-webkit-scrollbar-thumb { background: #6D28D9; border-radius: 4px; }
 
-/* ANIMASI DIPERBAIKI */
+/* ANIMASI */
 @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
 .animate-fade { animation: fadeEffect 0.2s ease-out forwards; }
 
 @keyframes popEffect { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-.animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; -webkit-animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-/* PRINT STYLE */
+
 @media print {
-    body { overflow: visible !important; height: auto !important; background: white !important; }
-    body * { visibility: hidden; }
-    #modal-report, #modal-report * { visibility: visible; }
-    #modal-report {
-        position: absolute !important; left: 0 !important; top: 0 !important;
-        width: 100% !important; height: auto !important;
-        margin: 0 !important; padding: 0 !important;
-        background: white !important; border: none !important; box-shadow: none !important;
-        overflow: visible !important; display: block !important; transform: none !important;
+    @page { size: auto; margin: 0mm; } /* Hilangkan margin browser */
+    
+    body { 
+        overflow: visible !important; 
+        height: auto !important; 
+        background: white !important;
+        margin: 0 !important;
     }
-    #report-content { height: auto !important; overflow: visible !important; }
-    #close-report, #btn-reset-db, #btn-print-pdf, .pagination-controls, .modal-footer { display: none !important; }
+    
+    /* Sembunyikan elemen lain */
+    body > *:not(#modal-report) { display: none !important; }
+    
+    /* Setting Modal saat Print */
+    #modal-report {
+        position: relative !important; /* Ubah dari fixed/absolute ke relative */
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+        height: auto !important;
+        overflow: visible !important; /* Biarkan memanjang ke bawah */
+        display: block !important;
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    /* Pastikan konten di dalam tidak discroll */
+    #report-content, .overflow-x-auto {
+        height: auto !important;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    /* Sembunyikan tombol */
+    #close-report, #btn-reset-db, #btn-print-pdf, .pagination-controls, .modal-footer { 
+        display: none !important; 
+    }
+
+    /* Cegah tabel terpotong jelek */
     tr { page-break-inside: avoid; }
+    table { width: 100% !important; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd !important; padding: 8px !important; }
 }
