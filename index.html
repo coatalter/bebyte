@@ -98,16 +98,21 @@
     </div>
   </div>
 
-  <div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto animate-fade">
-    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-5xl shadow-2xl overflow-hidden relative min-h-[500px] flex flex-col animate-pop">
-        <div class="bg-white p-4 border-b border-gray-200 flex justify-between items-center print:hidden">
+<div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto animate-fade">
+    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-5xl shadow-2xl relative flex flex-col max-h-[90vh] animate-pop">
+        
+        <div class="bg-white p-4 border-b border-gray-200 flex justify-between items-center shrink-0 rounded-t-xl">
             <img src="assets/bebyte-logo.png" class="h-8">
-            <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600">&times;</button>
+            <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600 px-2">&times;</button>
         </div>
-        <div id="report-content" class="p-6 bg-white flex-grow font-sans"></div>
-        <div class="modal-footer p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
+
+        <div id="report-content" class="p-6 bg-white overflow-y-auto custom-scroll"></div>
+
+        <div class="modal-footer p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center shrink-0 rounded-b-xl">
             <button id="btn-reset-db" class="text-red-600 font-bold text-xs hover:underline">HAPUS RIWAYAT</button>
-            <button id="btn-print-pdf" class="bg-green-600 text-white border border-green-700 px-6 py-2 rounded-full font-bold text-sm hover:bg-green-700 transition shadow flex items-center gap-2">Download Bukti Transaksi</button>
+            <button id="btn-print-pdf" class="bg-green-600 text-white border border-green-700 px-6 py-2 rounded-full font-bold text-sm hover:bg-green-700 transition shadow flex items-center gap-2">
+                Download Bukti Transaksi
+            </button>
         </div>
     </div>
   </div>
