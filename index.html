@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
   <title>BeByte - Order System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,23 +12,37 @@
           colors: {
             bebyte: { purple: '#6D28D9', yellow: '#FFE100', dark: '#1e1b4b', green: '#4ade80' }
           },
-          fontFamily: { sans: ['Fredoka', 'sans-serif'], display: ['Bangers', 'cursive'] }
+          fontFamily: { sans: ['Fredoka', 'sans-serif'], display: ['Bangers', 'cursive'] },
+          animation: {
+            'bounce-short': 'bounce-short 0.3s ease-in-out 1',
+            'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both'
+          },
+          keyframes: {
+            'bounce-short': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } },
+            'shake': { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } }
+          }
         }
       }
     }
   </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="min-h-screen text-bebyte-dark pb-10">
-  
+<body class="min-h-screen text-bebyte-dark pb-10 select-none bg-bebyte-purple">
+
+  <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+  <audio id="sfx-success" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+  <audio id="sfx-error" src="https://assets.mixkit.co/active_storage/sfx/944/944-preview.mp3" preload="auto"></audio>
+
   <nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <img src="assets/bebyte-logo.png" alt="BeByte Logo" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
+        <img src="assets/bebyte-logo.png" alt="BeByte" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
       </div>
-      <div class="flex gap-2">
-          <button id="btn-stock-mode" onclick="toggleStockMode()" class="bg-bebyte-purple text-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">📦 Stok</button>
-          <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] rounded-lg transition-all">🔒 Admin</button>
+      <div class="flex gap-2 items-center">
+          <div id="status-dot" class="w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow shadow-black transition-colors" title="Online"></div>
+          <button id="btn-stock-mode" onclick="toggleStockMode()" class="bg-bebyte-purple text-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition active:scale-95">📦 Stok</button>
+          <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] rounded-lg transition-all active:scale-95">🔒 Admin</button>
+          <button onclick="toggleFullscreen()" class="bg-black text-white border-2 border-white px-3 py-1 font-bold text-sm rounded-lg ml-2 hover:bg-gray-800 active:scale-95" title="Fullscreen Mode">⛶</button>
       </div>
     </div>
   </nav>
@@ -36,9 +50,9 @@
   <div class="max-w-6xl mx-auto p-4 md:p-6">
     <div class="bg-white border-4 border-black rounded-2xl p-6 mb-8 shadow-[6px_6px_0px_0px_rgba(255,225,0,1)] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden min-h-[200px]">
         <div class="relative z-20 text-center md:text-left md:max-w-[60%]">
-            <h2 class="text-4xl md:text-5xl font-black text-bebyte-purple mb-2 uppercase drop-shadow-sm">Technopreneurship 5.0</h2>
+            <h2 class="text-4xl md:text-5xl font-black text-bebyte-purple mb-2 uppercase drop-shadow-sm animate-fade">Technopreneurship 5.0</h2>
             <p class="text-lg font-bold text-gray-600">Selasa, 25 November 2025 • Booth BeByte</p>
-            <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm">🦖 Est. 2025</div>
+            <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm animate-bounce">🦖 Est. 2025</div>
         </div>
         <div class="absolute -right-4 -top-8 md:-top-12 z-10 pointer-events-none"><img src="assets/bebyte-mascot.png" class="h-48 md:h-64 w-auto transform rotate-12 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.5)] opacity-90 mix-blend-multiply"></div>
         <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-bebyte-yellow rounded-full border-4 border-black z-0"></div>
@@ -51,25 +65,33 @@
       </section>
 
       <aside class="lg:col-span-1">
-        <div class="sticky top-24">
+        <div class="sticky top-24 transition-all duration-300" id="cart-container">
             <div class="bg-bebyte-yellow border-4 border-black rounded-xl p-0 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.4)]">
                 <div class="bg-black p-3 flex justify-between items-center">
                     <div class="flex items-center gap-2">
                         <h3 class="text-white font-black text-xl tracking-widest uppercase">MY ORDER</h3>
-                        <button onclick="tryClearCart()" class="text-red-500 hover:text-red-400 font-bold text-xs border border-red-500 px-2 py-0.5 rounded transition bg-black">🗑️ CLEAR</button>
+                        <button onclick="tryClearCart()" class="text-red-500 hover:text-red-400 font-bold text-xs border border-red-500 px-2 py-0.5 rounded transition bg-black hover:bg-red-900">🗑️ CLEAR</button>
                     </div>
                     <span id="cart-count" class="bg-bebyte-green text-black text-xs font-bold px-2 py-1 rounded border border-white">0 Items</span>
                 </div>
                 <div class="p-4">
-                    <div id="cart-list" class="max-h-[300px] overflow-y-auto no-scrollbar space-y-2 mb-4"></div>
+                    <div id="cart-list" class="max-h-[300px] overflow-y-auto no-scrollbar space-y-2 mb-4 min-h-[100px] flex flex-col justify-center text-center">
+                        <p class="text-gray-500 text-sm italic font-bold opacity-50">Keranjang masih kosong...</p>
+                    </div>
                     <div class="space-y-2 mb-4 border-t-4 border-black border-dashed pt-4">
                         <p class="text-xs font-bold uppercase text-gray-600">Nama Pemesan (Wajib)</p>
-                        <input id="customer-name" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black] transition-all" placeholder="Tulis nama kakak...">
+                        <input id="customer-name" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[4px_4px_0px_0px_black] transition-all" placeholder="Tulis nama kakak...">
                     </div>
                     <div class="space-y-3">
-                        <input id="note" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black]" placeholder="Catatan dapur (opsional)...">
+                         <div class="flex gap-2 overflow-x-auto no-scrollbar mb-1 pb-1">
+                            <button onclick="addNote('Takeaway 🥡')" class="whitespace-nowrap bg-white border border-gray-400 px-2 py-1 rounded-full text-[10px] font-bold hover:bg-bebyte-yellow transition">Takeaway 🥡</button>
+                            <button onclick="addNote('Less Ice 🧊')" class="whitespace-nowrap bg-white border border-gray-400 px-2 py-1 rounded-full text-[10px] font-bold hover:bg-bebyte-yellow transition">Less Ice 🧊</button>
+                            <button onclick="addNote('Pedas 🔥')" class="whitespace-nowrap bg-white border border-gray-400 px-2 py-1 rounded-full text-[10px] font-bold hover:bg-bebyte-yellow transition">Pedas 🔥</button>
+                            <button onclick="addNote('Pisah Sambal')" class="whitespace-nowrap bg-white border border-gray-400 px-2 py-1 rounded-full text-[10px] font-bold hover:bg-bebyte-yellow transition">Pisah Sambal</button>
+                        </div>
+                        <input id="note" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[4px_4px_0px_0px_black] transition-all" placeholder="Catatan dapur (opsional)...">
                         <div class="flex justify-between items-end"><span class="font-bold text-sm">Total Amount</span><span id="total" class="font-black text-3xl text-bebyte-purple">Rp 0</span></div>
-                        <button id="btn-send" class="w-full bg-bebyte-purple text-white border-2 border-black py-3 rounded-lg font-black text-xl tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:bg-purple-800">CHECKOUT NOW ➤</button>
+                        <button id="btn-send" class="w-full bg-bebyte-purple text-white border-2 border-black py-3 rounded-lg font-black text-xl tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:bg-purple-800 active:scale-[0.98]">CHECKOUT NOW ➤</button>
                     </div>
                 </div>
             </div>
@@ -79,11 +101,11 @@
   </div>
 
   <div id="custom-alert" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-[100] backdrop-blur-sm p-6 animate-fade">
-    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#FFE100] animate-pop">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#FFE100] animate-pop transform transition-all">
         <div class="bg-bebyte-purple p-3 border-b-4 border-black"><h3 id="alert-title" class="text-white font-black text-xl text-center uppercase">ALERT</h3></div>
         <div class="p-6 text-center">
-            <p id="alert-msg" class="font-bold text-lg mb-6 text-black leading-tight">Pesan error disini</p>
-            <button id="btn-alert-ok" class="bg-bebyte-yellow text-black border-2 border-black px-6 py-2 rounded-lg font-black shadow-[4px_4px_0px_0px_black] hover:translate-y-[2px] transition">OKE SIAP!</button>
+            <p id="alert-msg" class="font-bold text-lg mb-6 text-black leading-tight whitespace-pre-line">Pesan error disini</p>
+            <button id="btn-alert-ok" class="bg-bebyte-yellow text-black border-2 border-black px-6 py-2 rounded-lg font-black shadow-[4px_4px_0px_0px_black] hover:translate-y-[2px] hover:shadow-none transition active:scale-95">OKE SIAP!</button>
         </div>
     </div>
   </div>
@@ -92,26 +114,29 @@
     <div class="bg-white border-4 border-bebyte-purple rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-pop">
         <div class="bg-bebyte-purple p-4 flex justify-between items-center border-b-4 border-black">
             <h3 id="variant-title" class="text-white font-black text-lg tracking-wide">PILIH VARIAN</h3>
-            <button id="close-variant" class="text-white font-bold text-2xl">&times;</button>
+            <button id="close-variant" class="text-white font-bold text-2xl hover:rotate-90 transition">&times;</button>
         </div>
         <div class="p-4 bg-gray-50"><div id="variant-options" class="space-y-3"></div></div>
     </div>
   </div>
 
-<div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto animate-fade">
+  <div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto animate-fade">
     <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-5xl shadow-2xl relative flex flex-col max-h-[90vh] animate-pop">
-        
         <div class="bg-white p-4 border-b border-gray-200 flex justify-between items-center shrink-0 rounded-t-xl">
-            <img src="assets/bebyte-logo.png" class="h-8">
-            <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600 px-2">&times;</button>
+            <div class="flex items-center gap-2">
+                <img src="assets/bebyte-logo.png" class="h-8">
+                <span class="font-black text-bebyte-purple">ADMIN DASHBOARD</span>
+            </div>
+            <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600 px-2 transition hover:rotate-90">&times;</button>
         </div>
-
         <div id="report-content" class="p-6 bg-white overflow-y-auto custom-scroll"></div>
-
         <div class="modal-footer p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center shrink-0 rounded-b-xl">
-            <button id="btn-reset-db" class="text-red-600 font-bold text-xs hover:underline">HAPUS RIWAYAT</button>
-            <button id="btn-print-pdf" class="bg-green-600 text-white border border-green-700 px-6 py-2 rounded-full font-bold text-sm hover:bg-green-700 transition shadow flex items-center gap-2">
-                Download Bukti Transaksi
+            <div class="flex gap-4">
+                <button id="btn-reset-db" class="text-red-600 font-bold text-xs hover:underline hover:text-red-800">HAPUS RIWAYAT</button>
+                <button id="btn-backup" class="text-blue-600 font-bold text-xs hover:underline hover:text-blue-800">DOWNLOAD BACKUP JSON</button>
+            </div>
+            <button id="btn-print-pdf" class="bg-green-600 text-white border-2 border-green-800 px-6 py-2 rounded-full font-bold text-sm hover:bg-green-500 transition shadow-[2px_2px_0px_black] hover:translate-y-[1px] hover:shadow-none active:scale-95 flex items-center gap-2">
+                🖨️ Cetak Laporan
             </button>
         </div>
     </div>
@@ -121,26 +146,52 @@
     <div class="bg-white border-4 border-black rounded-xl w-full max-w-sm shadow-[8px_8px_0px_0px_#4ade80] animate-pop">
         <div class="bg-black p-3 flex justify-between items-center">
             <h3 class="text-white font-black text-xl tracking-widest">PEMBAYARAN</h3>
-            <button id="close-payment" class="text-white font-bold text-2xl">&times;</button>
+            <button id="close-payment" class="text-white font-bold text-2xl hover:rotate-90 transition">&times;</button>
         </div>
         <div class="p-6 space-y-4">
-            <div class="text-center mb-4">
+            <div class="text-center mb-2">
                 <p class="text-gray-500 font-bold text-xs uppercase">Total Tagihan</p>
-                <h2 id="pay-total" class="text-4xl font-black text-bebyte-purple">Rp 0</h2>
+                <h2 id="pay-total" class="text-4xl font-black text-bebyte-purple animate-bounce-short">Rp 0</h2>
             </div>
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="setMethod('CASH')" id="btn-cash" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-bebyte-yellow ring-2 ring-black ring-offset-2">💵 CASH</button>
-                <button onclick="setMethod('QRIS')" id="btn-qris" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-white">📱 QRIS</button>
+                <button onclick="setMethod('CASH')" id="btn-cash" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-bebyte-yellow ring-2 ring-black ring-offset-2 transition-all">💵 CASH</button>
+                <button onclick="setMethod('QRIS')" id="btn-qris" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-white transition-all">📱 QRIS</button>
             </div>
-            <div id="cash-input-group" class="space-y-2">
+            
+            <div id="cash-input-group" class="space-y-3">
                 <label class="text-xs font-bold uppercase">Uang Diterima</label>
-                <input type="number" id="input-cash" class="w-full border-2 border-black rounded p-2 text-xl font-bold text-right" placeholder="0">
-                <div class="flex justify-between items-center bg-gray-100 p-2 rounded border border-gray-300">
+                <div class="relative">
+                    <input type="text" id="input-cash" readonly class="w-full border-2 border-black rounded-lg p-3 text-3xl font-black text-right bg-gray-100 focus:outline-none" placeholder="0">
+                    <button onclick="clearCash()" class="absolute left-2 top-1/2 -translate-y-1/2 text-red-500 font-bold text-sm bg-white border border-gray-300 px-2 py-1 rounded hover:bg-red-50">CLEAR</button>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="numpad(7)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">7</button>
+                    <button onclick="numpad(8)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">8</button>
+                    <button onclick="numpad(9)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">9</button>
+                    <button onclick="numpad('10000')" class="bg-green-100 border-2 border-green-600 rounded p-1 text-xs font-bold active:scale-95">+10k</button>
+
+                    <button onclick="numpad(4)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">4</button>
+                    <button onclick="numpad(5)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">5</button>
+                    <button onclick="numpad(6)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">6</button>
+                    <button onclick="numpad('20000')" class="bg-green-100 border-2 border-green-600 rounded p-1 text-xs font-bold active:scale-95">+20k</button>
+
+                    <button onclick="numpad(1)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">1</button>
+                    <button onclick="numpad(2)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">2</button>
+                    <button onclick="numpad(3)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">3</button>
+                    <button onclick="numpad('50000')" class="bg-green-100 border-2 border-green-600 rounded p-1 text-xs font-bold active:scale-95">+50k</button>
+
+                    <button onclick="numpad(0)" class="bg-white border-2 border-black rounded p-3 text-xl font-bold active:bg-gray-200">0</button>
+                    <button onclick="numpad('000')" class="bg-gray-200 border-2 border-black rounded p-3 text-lg font-bold active:bg-gray-300">000</button>
+                    <button onclick="numpad('backspace')" class="bg-red-100 text-red-600 border-2 border-red-600 rounded p-3 text-xl font-bold active:bg-red-200">⌫</button>
+                    <button onclick="setUangPas()" class="bg-bebyte-purple text-white border-2 border-black rounded p-1 text-[10px] font-bold active:scale-95">PAS</button>
+                </div>
+                <div class="flex justify-between items-center bg-gray-100 p-2 rounded border border-gray-300 mt-2">
                     <span class="text-xs font-bold text-gray-500">Kembalian:</span>
                     <span id="text-change" class="font-black text-xl text-green-600">Rp 0</span>
                 </div>
             </div>
-            <button id="btn-final-pay" class="w-full bg-bebyte-green border-2 border-black py-3 rounded-lg font-black text-xl shadow-[4px_4px_0px_0px_black] active:translate-y-[2px] active:shadow-none transition">BAYAR & KIRIM 🚀</button>
+
+            <button id="btn-final-pay" class="w-full bg-bebyte-green border-2 border-black py-3 rounded-lg font-black text-xl shadow-[4px_4px_0px_0px_black] active:translate-y-[2px] active:shadow-none hover:bg-green-400 transition">BAYAR & KIRIM 🚀</button>
         </div>
     </div>
   </div>
@@ -149,7 +200,7 @@
     <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#6D28D9] animate-pop">
         <div class="bg-bebyte-purple p-3 border-b-4 border-black flex justify-between items-center">
             <h3 id="qty-title" class="text-white font-black text-lg uppercase tracking-wide">BELI BERAPA?</h3>
-            <button onclick="document.getElementById('modal-qty').classList.add('hidden')" class="text-white font-bold text-2xl">&times;</button>
+            <button onclick="closeModalQty()" class="text-white font-bold text-2xl hover:rotate-90 transition">&times;</button>
         </div>
         <div class="p-6">
             <div class="flex items-center gap-2 mb-4">
@@ -165,18 +216,18 @@
     <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#be185d] animate-pop relative">
         <div class="bg-pink-700 p-3 border-b-4 border-black flex justify-between items-center">
             <h3 class="text-white font-black text-lg uppercase tracking-wide">UBAH JUMLAH</h3>
-            <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="text-white font-bold text-2xl hover:text-pink-200">&times;</button>
+            <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="text-white font-bold text-2xl hover:text-pink-200 hover:rotate-90 transition">&times;</button>
         </div>
         <div class="p-6">
             <p id="edit-item-name" class="text-center text-sm font-bold text-gray-500 mb-2">Nama Item</p>
             <div class="flex items-center gap-2 mb-4">
-                <button onclick="changeEditInput(-1)" class="w-10 h-10 bg-gray-200 border-2 border-black rounded font-bold text-xl hover:bg-gray-300">-</button>
+                <button onclick="changeEditInput(-1)" class="w-10 h-10 bg-gray-200 border-2 border-black rounded font-bold text-xl hover:bg-gray-300 active:scale-95 transition">-</button>
                 <input id="input-edit-qty" type="number" value="1" min="0" class="w-full border-4 border-black rounded-lg p-2 text-center text-3xl font-black focus:outline-none">
-                <button onclick="changeEditInput(1)" class="w-10 h-10 bg-bebyte-purple text-white border-2 border-black rounded font-bold text-xl hover:bg-purple-700">+</button>
+                <button onclick="changeEditInput(1)" class="w-10 h-10 bg-bebyte-purple text-white border-2 border-black rounded font-bold text-xl hover:bg-purple-700 active:scale-95 transition">+</button>
             </div>
             <div class="flex gap-2">
-                <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="w-1/3 bg-gray-200 border-2 border-black py-2 rounded-lg font-bold text-sm">BATAL</button>
-                <button id="btn-save-qty" class="w-2/3 bg-pink-600 text-white border-2 border-black py-2 rounded-lg font-black text-sm shadow-[2px_2px_0px_0px_black] active:translate-y-[2px] active:shadow-none transition">SIMPAN</button>
+                <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="w-1/3 bg-gray-200 border-2 border-black py-2 rounded-lg font-bold text-sm hover:bg-gray-300">BATAL</button>
+                <button id="btn-save-qty" class="w-2/3 bg-pink-600 text-white border-2 border-black py-2 rounded-lg font-black text-sm shadow-[2px_2px_0px_0px_black] active:translate-y-[2px] active:shadow-none transition hover:bg-pink-500">SIMPAN</button>
             </div>
         </div>
     </div>
@@ -190,8 +241,8 @@
         <div class="p-6 text-center">
             <p id="confirm-msg" class="font-bold text-black mb-6">Pesan konfirmasi disini...</p>
             <div class="flex gap-2 justify-center">
-                <button id="btn-confirm-no" class="bg-gray-200 border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-300">GAK JADI</button>
-                <button id="btn-confirm-yes" class="bg-red-600 text-white border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none">GAS!</button>
+                <button id="btn-confirm-no" class="bg-gray-200 border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-300 active:scale-95 transition">GAK JADI</button>
+                <button id="btn-confirm-yes" class="bg-red-600 text-white border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none transition">GAS!</button>
             </div>
         </div>
     </div>
