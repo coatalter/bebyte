@@ -10,17 +10,9 @@
       theme: {
         extend: {
           colors: {
-            bebyte: {
-              purple: '#6D28D9', // Warna Ungu Utama
-              yellow: '#FFE100', // Warna Kuning Aksen
-              dark: '#1e1b4b',   // Warna Teks Gelap
-              green: '#4ade80'   // Warna Dino
-            }
+            bebyte: { purple: '#6D28D9', yellow: '#FFE100', dark: '#1e1b4b', green: '#4ade80' }
           },
-          fontFamily: {
-            sans: ['Fredoka', 'sans-serif'],
-            display: ['Bangers', 'cursive'] 
-          }
+          fontFamily: { sans: ['Fredoka', 'sans-serif'], display: ['Bangers', 'cursive'] }
         }
       }
     }
@@ -29,18 +21,14 @@
 </head>
 <body class="min-h-screen text-bebyte-dark pb-10">
   
-<nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
+  <nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <img src="assets/bebyte-logo.png" alt="Logo" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition drop-shadow-[2px_2px_0px_black]">
+        <img src="assets/bebyte-logo.png" alt="BeByte Logo" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
       </div>
       <div class="flex gap-2">
-          <button id="btn-stock-mode" onclick="toggleStockMode()" class="bg-bebyte-purple text-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">
-            📦 Stok
-          </button>
-          <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">
-            🔒 Admin
-          </button>
+          <button id="btn-stock-mode" onclick="toggleStockMode()" class="bg-bebyte-purple text-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] rounded-lg transition">📦 Stok</button>
+          <button id="btn-report" class="bg-white border-2 border-black px-3 py-1 font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] rounded-lg transition-all">🔒 Admin</button>
       </div>
     </div>
   </nav>
@@ -50,26 +38,15 @@
         <div class="relative z-20 text-center md:text-left md:max-w-[60%]">
             <h2 class="text-4xl md:text-5xl font-black text-bebyte-purple mb-2 uppercase drop-shadow-sm">Technopreneurship 5.0</h2>
             <p class="text-lg font-bold text-gray-600">Selasa, 25 November 2025 • Booth BeByte</p>
-            <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm">
-                🦖 Est. 2025
-            </div>
+            <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm">🦖 Est. 2025</div>
         </div>
-
-        <div class="absolute -right-4 -top-8 md:-top-12 z-10 pointer-events-none">
-             <img src="assets/bebyte-mascot.png" alt="" class="h-48 md:h-64 w-auto transform rotate-12 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.5)] opacity-90 mix-blend-multiply">
-        </div>
-
+        <div class="absolute -right-4 -top-8 md:-top-12 z-10 pointer-events-none"><img src="assets/bebyte-mascot.png" class="h-48 md:h-64 w-auto transform rotate-12 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.5)] opacity-90 mix-blend-multiply"></div>
         <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-bebyte-yellow rounded-full border-4 border-black z-0"></div>
     </div>
 
     <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
       <section class="lg:col-span-2">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="h-4 w-4 bg-bebyte-yellow border-2 border-black rounded-full"></div>
-            <h2 class="text-3xl font-black text-white tracking-wide drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">MAIN MENU</h2>
-        </div>
-        
+        <div class="flex items-center gap-3 mb-6"><div class="h-4 w-4 bg-bebyte-yellow border-2 border-black rounded-full"></div><h2 class="text-3xl font-black text-white tracking-wide drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">MAIN MENU</h2></div>
         <div id="menu-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
       </section>
 
@@ -77,31 +54,22 @@
         <div class="sticky top-24">
             <div class="bg-bebyte-yellow border-4 border-black rounded-xl p-0 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.4)]">
                 <div class="bg-black p-3 flex justify-between items-center">
-                    <h3 class="text-white font-black text-xl tracking-widest uppercase">MY ORDER</h3>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-white font-black text-xl tracking-widest uppercase">MY ORDER</h3>
+                        <button onclick="tryClearCart()" class="text-red-500 hover:text-red-400 font-bold text-xs border border-red-500 px-2 py-0.5 rounded transition bg-black">🗑️ CLEAR</button>
+                    </div>
                     <span id="cart-count" class="bg-bebyte-green text-black text-xs font-bold px-2 py-1 rounded border border-white">0 Items</span>
                 </div>
-
                 <div class="p-4">
-                    <div id="cart-list" class="max-h-[250px] overflow-y-auto no-scrollbar space-y-2 mb-4"></div>
-
+                    <div id="cart-list" class="max-h-[300px] overflow-y-auto no-scrollbar space-y-2 mb-4"></div>
                     <div class="space-y-2 mb-4 border-t-4 border-black border-dashed pt-4">
                         <p class="text-xs font-bold uppercase text-gray-600">Nama Pemesan (Wajib)</p>
-                        <div class="w-full">
-                            <input id="customer-name" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black] transition-all" placeholder="Tulis nama kakak...">
-                        </div>
+                        <input id="customer-name" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black] transition-all" placeholder="Tulis nama kakak...">
                     </div>
-
                     <div class="space-y-3">
                         <input id="note" type="text" class="w-full bg-white border-2 border-black rounded-lg px-3 py-2 font-bold text-sm focus:outline-none focus:shadow-[2px_2px_0px_0px_black]" placeholder="Catatan dapur (opsional)...">
-                        
-                        <div class="flex justify-between items-end">
-                            <span class="font-bold text-sm">Total Amount</span>
-                            <span id="total" class="font-black text-3xl text-bebyte-purple">Rp 0</span>
-                        </div>
-
-                        <button id="btn-send" class="w-full bg-bebyte-purple text-white border-2 border-black py-3 rounded-lg font-black text-xl tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:bg-purple-800">
-                            CHECKOUT NOW ➤
-                        </button>
+                        <div class="flex justify-between items-end"><span class="font-bold text-sm">Total Amount</span><span id="total" class="font-black text-3xl text-bebyte-purple">Rp 0</span></div>
+                        <button id="btn-send" class="w-full bg-bebyte-purple text-white border-2 border-black py-3 rounded-lg font-black text-xl tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:bg-purple-800">CHECKOUT NOW ➤</button>
                     </div>
                 </div>
             </div>
@@ -110,84 +78,119 @@
     </main>
   </div>
 
-  <div id="custom-alert" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-[100] backdrop-blur-sm p-6 animate-fade-in">
-    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#FFE100] transform transition-all">
-        <div class="bg-bebyte-purple p-3 border-b-4 border-black">
-            <h3 id="alert-title" class="text-white font-black text-xl text-center uppercase">ALERT</h3>
-        </div>
+  <div id="custom-alert" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-[100] backdrop-blur-sm p-6 animate-fade">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#FFE100] animate-pop">
+        <div class="bg-bebyte-purple p-3 border-b-4 border-black"><h3 id="alert-title" class="text-white font-black text-xl text-center uppercase">ALERT</h3></div>
         <div class="p-6 text-center">
             <p id="alert-msg" class="font-bold text-lg mb-6 text-black leading-tight">Pesan error disini</p>
-            <button id="btn-alert-ok" class="bg-bebyte-yellow text-black border-2 border-black px-6 py-2 rounded-lg font-black shadow-[4px_4px_0px_0px_black] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_black] transition">
-                OKE SIAP!
-            </button>
+            <button id="btn-alert-ok" class="bg-bebyte-yellow text-black border-2 border-black px-6 py-2 rounded-lg font-black shadow-[4px_4px_0px_0px_black] hover:translate-y-[2px] transition">OKE SIAP!</button>
         </div>
     </div>
   </div>
 
-  <div id="modal-variant" class="fixed inset-0 bg-black/80 hidden flex items-end md:items-center justify-center z-[60] backdrop-blur-sm p-4 animate-fade-in">
-    <div class="bg-white border-4 border-bebyte-purple rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all scale-100">
+  <div id="modal-variant" class="fixed inset-0 bg-black/80 hidden flex items-end md:items-center justify-center z-[60] backdrop-blur-sm p-4 animate-fade">
+    <div class="bg-white border-4 border-bebyte-purple rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-pop">
         <div class="bg-bebyte-purple p-4 flex justify-between items-center border-b-4 border-black">
             <h3 id="variant-title" class="text-white font-black text-lg tracking-wide">PILIH VARIAN</h3>
-            <button id="close-variant" class="text-white font-bold hover:text-bebyte-yellow text-2xl leading-none">&times;</button>
+            <button id="close-variant" class="text-white font-bold text-2xl">&times;</button>
         </div>
-        
-        <div class="p-4 bg-gray-50">
-            <div id="variant-options" class="space-y-3">
-                </div>
+        <div class="p-4 bg-gray-50"><div id="variant-options" class="space-y-3"></div></div>
+    </div>
+  </div>
+
+  <div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto animate-fade">
+    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-5xl shadow-2xl overflow-hidden relative min-h-[500px] flex flex-col animate-pop">
+        <div class="bg-white p-4 border-b border-gray-200 flex justify-between items-center print:hidden">
+            <img src="assets/bebyte-logo.png" class="h-8">
+            <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600">&times;</button>
+        </div>
+        <div id="report-content" class="p-6 bg-white flex-grow font-sans"></div>
+        <div class="modal-footer p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
+            <button id="btn-reset-db" class="text-red-600 font-bold text-xs hover:underline">HAPUS RIWAYAT</button>
+            <button id="btn-print-pdf" class="bg-green-600 text-white border border-green-700 px-6 py-2 rounded-full font-bold text-sm hover:bg-green-700 transition shadow flex items-center gap-2">Download Bukti Transaksi</button>
         </div>
     </div>
   </div>
 
-<div id="modal-report" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-md shadow-2xl overflow-hidden relative">
-        <div class="bg-bebyte-purple p-4 flex justify-between items-center print:hidden">
-            <h3 class="text-white font-black text-xl">DAILY REPORT</h3>
-            <button id="close-report" class="text-white font-bold hover:text-bebyte-yellow text-2xl">&times;</button>
-        </div>
-        <div id="report-content" class="p-6 bg-white"></div>
-        <div class="modal-footer p-4 border-t-2 border-gray-200 bg-gray-50 flex justify-between items-center">
-            <button id="clear-report" class="text-red-600 font-bold text-xs hover:underline">RESET DATABASE</button>
-            <button id="btn-print-pdf" class="bg-bebyte-dark text-white border-2 border-black px-4 py-2 rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_black] hover:translate-y-[2px] transition flex items-center gap-2">
-                🖨️ SAVE PDF
-            </button>
-        </div>
-    </div>
-  </div>  
-
-  <div id="modal-payment" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[70] backdrop-blur-sm p-4 animate-fade-in">
-    <div class="bg-white border-4 border-black rounded-xl w-full max-w-sm shadow-[8px_8px_0px_0px_#4ade80]">
+  <div id="modal-payment" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[70] backdrop-blur-sm p-4 animate-fade">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-sm shadow-[8px_8px_0px_0px_#4ade80] animate-pop">
         <div class="bg-black p-3 flex justify-between items-center">
             <h3 class="text-white font-black text-xl tracking-widest">PEMBAYARAN</h3>
             <button id="close-payment" class="text-white font-bold text-2xl">&times;</button>
         </div>
-        
         <div class="p-6 space-y-4">
             <div class="text-center mb-4">
                 <p class="text-gray-500 font-bold text-xs uppercase">Total Tagihan</p>
                 <h2 id="pay-total" class="text-4xl font-black text-bebyte-purple">Rp 0</h2>
             </div>
-
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="setMethod('CASH')" id="btn-cash" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-bebyte-yellow ring-2 ring-black ring-offset-2">💵 CASH</button>
                 <button onclick="setMethod('QRIS')" id="btn-qris" class="border-2 border-black py-2 rounded font-bold hover:bg-gray-100 bg-white">📱 QRIS</button>
             </div>
-
             <div id="cash-input-group" class="space-y-2">
                 <label class="text-xs font-bold uppercase">Uang Diterima</label>
                 <input type="number" id="input-cash" class="w-full border-2 border-black rounded p-2 text-xl font-bold text-right" placeholder="0">
-                
                 <div class="flex justify-between items-center bg-gray-100 p-2 rounded border border-gray-300">
                     <span class="text-xs font-bold text-gray-500">Kembalian:</span>
                     <span id="text-change" class="font-black text-xl text-green-600">Rp 0</span>
                 </div>
             </div>
-
-            <button id="btn-final-pay" class="w-full bg-bebyte-green border-2 border-black py-3 rounded-lg font-black text-xl shadow-[4px_4px_0px_0px_black] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_black] transition">
-                BAYAR & KIRIM 🚀
-            </button>
+            <button id="btn-final-pay" class="w-full bg-bebyte-green border-2 border-black py-3 rounded-lg font-black text-xl shadow-[4px_4px_0px_0px_black] active:translate-y-[2px] active:shadow-none transition">BAYAR & KIRIM 🚀</button>
         </div>
     </div>
-</div>
+  </div>
+
+  <div id="modal-qty" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[80] backdrop-blur-sm p-4 animate-fade">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#6D28D9] animate-pop">
+        <div class="bg-bebyte-purple p-3 border-b-4 border-black flex justify-between items-center">
+            <h3 id="qty-title" class="text-white font-black text-lg uppercase tracking-wide">BELI BERAPA?</h3>
+            <button onclick="document.getElementById('modal-qty').classList.add('hidden')" class="text-white font-bold text-2xl">&times;</button>
+        </div>
+        <div class="p-6">
+            <div class="flex items-center gap-2 mb-4">
+                <input id="input-qty-number" type="number" value="1" min="1" class="w-full border-4 border-black rounded-lg p-3 text-center text-3xl font-black focus:outline-none focus:shadow-[4px_4px_0px_0px_black] transition">
+            </div>
+            <p class="text-center text-xs font-bold text-gray-500 mb-4">Total: <span id="qty-total-price" class="text-black text-lg">Rp 1.000</span></p>
+            <button id="btn-add-qty" class="w-full bg-bebyte-yellow border-2 border-black py-3 rounded-lg font-black text-xl shadow-[4px_4px_0px_0px_black] active:translate-y-[2px] active:shadow-none hover:bg-yellow-300 transition">MASUKKAN 🛒</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="modal-edit-qty" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[90] backdrop-blur-sm animate-fade">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#be185d] animate-pop relative">
+        <div class="bg-pink-700 p-3 border-b-4 border-black flex justify-between items-center">
+            <h3 class="text-white font-black text-lg uppercase tracking-wide">UBAH JUMLAH</h3>
+            <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="text-white font-bold text-2xl hover:text-pink-200">&times;</button>
+        </div>
+        <div class="p-6">
+            <p id="edit-item-name" class="text-center text-sm font-bold text-gray-500 mb-2">Nama Item</p>
+            <div class="flex items-center gap-2 mb-4">
+                <button onclick="changeEditInput(-1)" class="w-10 h-10 bg-gray-200 border-2 border-black rounded font-bold text-xl hover:bg-gray-300">-</button>
+                <input id="input-edit-qty" type="number" value="1" min="0" class="w-full border-4 border-black rounded-lg p-2 text-center text-3xl font-black focus:outline-none">
+                <button onclick="changeEditInput(1)" class="w-10 h-10 bg-bebyte-purple text-white border-2 border-black rounded font-bold text-xl hover:bg-purple-700">+</button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('modal-edit-qty').classList.add('hidden')" class="w-1/3 bg-gray-200 border-2 border-black py-2 rounded-lg font-bold text-sm">BATAL</button>
+                <button id="btn-save-qty" class="w-2/3 bg-pink-600 text-white border-2 border-black py-2 rounded-lg font-black text-sm shadow-[2px_2px_0px_0px_black] active:translate-y-[2px] active:shadow-none transition">SIMPAN</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="modal-confirm" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[100] backdrop-blur-sm animate-fade">
+    <div class="bg-white border-4 border-black rounded-xl w-full max-w-xs shadow-[8px_8px_0px_0px_#FF0000] animate-pop relative">
+        <div class="bg-red-600 p-3 border-b-4 border-black">
+            <h3 id="confirm-title" class="text-white font-black text-lg uppercase tracking-wide text-center">YAKIN BRO?</h3>
+        </div>
+        <div class="p-6 text-center">
+            <p id="confirm-msg" class="font-bold text-black mb-6">Pesan konfirmasi disini...</p>
+            <div class="flex gap-2 justify-center">
+                <button id="btn-confirm-no" class="bg-gray-200 border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-300">GAK JADI</button>
+                <button id="btn-confirm-yes" class="bg-red-600 text-white border-2 border-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none">GAS!</button>
+            </div>
+        </div>
+    </div>
+  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>
