@@ -10,64 +10,45 @@
 body {
     font-family: 'Fredoka', sans-serif;
     background-color: var(--bebyte-purple);
-    /* Pattern simple */
     background-image: radial-gradient(var(--bebyte-yellow) 1px, transparent 1px);
     background-size: 20px 20px; 
 }
 
-/* Custom Scrollbar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Efek Kartu Timbul */
 .card-pop {
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     border: 3px solid black;
     box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
 }
-.card-pop:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-}
-.card-pop:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
-}
+.card-pop:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); }
+.card-pop:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px rgba(0,0,0,1); }
 
-/* Custom Scroll untuk modal report */
-.custom-scroll::-webkit-scrollbar {
-    width: 8px;
-}
-.custom-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-    background: #6D28D9;
-    border-radius: 4px;
-}
+.custom-scroll::-webkit-scrollbar { width: 8px; }
+.custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #6D28D9; border-radius: 4px; }
 
-/* Animasi Fade In */
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-.animate-fade-in {
-    animation: fadeIn 0.2s ease-out forwards;
-}
+/* ANIMASI DIPERBAIKI */
+@keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade { animation: fadeEffect 0.2s ease-out forwards; }
 
+@keyframes popEffect { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+/* PRINT STYLE */
 @media print {
+    body { overflow: visible !important; height: auto !important; background: white !important; }
     body * { visibility: hidden; }
     #modal-report, #modal-report * { visibility: visible; }
     #modal-report {
-        position: absolute; left: 0; top: 0; width: 100%;
-        margin: 0; padding: 0; background: white;
-        border: none !important; box-shadow: none !important;
+        position: absolute !important; left: 0 !important; top: 0 !important;
+        width: 100% !important; height: auto !important;
+        margin: 0 !important; padding: 0 !important;
+        background: white !important; border: none !important; box-shadow: none !important;
+        overflow: visible !important; display: block !important; transform: none !important;
     }
-    /* Sembunyikan elemen yang tidak perlu di kertas */
-    #close-report, #clear-report, #btn-print-pdf, .modal-footer, ::-webkit-scrollbar {
-        display: none !important;
-    }
-    #report-content { color: black !important; }
-    .text-bebyte-purple { color: black !important; }
-    .bg-bebyte-yellow { border: 1px solid black !important; background: none !important; }
+    #report-content { height: auto !important; overflow: visible !important; }
+    #close-report, #btn-reset-db, #btn-print-pdf, .pagination-controls, .modal-footer { display: none !important; }
+    tr { page-break-inside: avoid; }
 }
