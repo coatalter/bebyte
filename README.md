@@ -1,4 +1,3 @@
-Siap — ini **README.md final** yang sudah **langsung siap upload** ke GitHub tanpa tambahan apa pun:
 
 ---
 
