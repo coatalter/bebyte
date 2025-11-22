@@ -38,9 +38,11 @@ body {
 
 
 @media print {
-    @page { size: auto; margin: 0mm; } /* Hilangkan margin browser */
+    @page { size: auto; margin: 5mm; } 
     
+    /* Reset Body */
     body { 
+        visibility: hidden;
         overflow: visible !important; 
         height: auto !important; 
         background: white !important;
@@ -50,37 +52,77 @@ body {
     /* Sembunyikan elemen lain */
     body > *:not(#modal-report) { display: none !important; }
     
-    /* Setting Modal saat Print */
+    /* RESET TOTAL MODAL REPORT */
     #modal-report {
-        position: relative !important; /* Ubah dari fixed/absolute ke relative */
+        visibility: visible !important;
+        position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        min-height: 100vh !important;
         height: auto !important;
-        overflow: visible !important; /* Biarkan memanjang ke bawah */
+        min-height: auto !important;
+        max-height: none !important; /* KUNCI: Matikan batas tinggi */
+        overflow: visible !important; /* KUNCI: Matikan scroll */
         display: block !important;
         background: white !important;
         border: none !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 20px !important;
+        padding: 0 !important;
+        transform: none !important;
+        z-index: 9999 !important;
     }
 
-    /* Pastikan konten di dalam tidak discroll */
-    #report-content, .overflow-x-auto {
+    /* RESET CONTAINER DI DALAM MODAL */
+    /* Ini menargetkan div pembungkus (yang ada class flex-col dll) */
+    #modal-report > div {
+        max-height: none !important;
         height: auto !important;
         overflow: visible !important;
+        box-shadow: none !important;
+        border: none !important;
+        position: static !important;
+        display: block !important;
+    }
+
+    /* RESET KONTEN TABEL */
+    #report-content {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+        padding: 0 !important;
+    }
+
+    /* Paksa tabel melebar dan memanjang */
+    .overflow-x-auto, .custom-scroll {
+        overflow: visible !important;
+        height: auto !important;
         max-height: none !important;
     }
 
-    /* Sembunyikan tombol */
+    /* Sembunyikan tombol-tombol navigasi saat print */
     #close-report, #btn-reset-db, #btn-print-pdf, .pagination-controls, .modal-footer { 
         display: none !important; 
     }
 
-    /* Cegah tabel terpotong jelek */
-    tr { page-break-inside: avoid; }
-    table { width: 100% !important; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd !important; padding: 8px !important; }
+    /* Styling Tabel Cetak */
+    table { 
+        width: 100% !important; 
+        border-collapse: collapse; 
+        table-layout: fixed; /* Agar kolom rapi */
+    }
+    
+    th, td { 
+        border: 1px solid #000 !important; 
+        padding: 8px !important; 
+        color: black !important;
+        font-size: 10pt !important; /* Ukuran font hemat kertas */
+        white-space: normal !important; /* Text wrap nyala */
+    }
+
+    /* Mencegah baris terpotong di tengah halaman */
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
 }
