@@ -4,7 +4,7 @@ import { sendToDiscord, sendOrderDone } from './discord.js';
 
 const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v);
 
-// --- SFX GLOBAL ---
+// --- SFX ---
 const sounds = {
     click: document.getElementById('sfx-click'),
     success: document.getElementById('sfx-success'),
@@ -42,7 +42,6 @@ try {
 } catch (err) { localMenu = JSON.parse(JSON.stringify(MENU)); localStorage.removeItem('menu_stock'); }
 localStorage.setItem('menu_stock', JSON.stringify(localMenu));
 
-// VARIABLES
 let currentPaymentMethod = 'CASH';
 let currentTotalBill = 0;
 let currentQtyItem = null;
@@ -50,9 +49,8 @@ let reportPage = 1;
 const itemsPerPage = 5; 
 let isPrintingMode = false;
 let editingItemData = null; 
-let tempCashString = ""; // For Tablet Numpad
+let tempCashString = ""; // Numpad
 
-// DOM ELEMENTS
 const els = {
   grid: document.getElementById('menu-grid'),
   cartList: document.getElementById('cart-list'),
@@ -100,7 +98,7 @@ const elsConfirm = {
 
 function saveMenuStock() { localStorage.setItem('menu_stock', JSON.stringify(localMenu)); }
 
-// --- CONFIRM & ALERT ---
+// --- HELPERS ---
 let confirmCallback = null;
 window.showConfirm = (title, msg, callback) => {
     playSound('click');
@@ -170,7 +168,7 @@ function updateCart() {
     else els.cartList.innerHTML = cart.map(i => `<div class="flex justify-between items-center bg-white p-2 rounded border-2 border-black mb-2 shadow-sm group hover:shadow-md transition"><div class="flex-1 pr-2"><div class="flex items-center gap-2"><button onclick="removeCartItem(${i.id}, '${i.variant}')" class="text-gray-300 hover:text-red-500 transition" title="Hapus Item">❌</button><div class="font-bold text-sm leading-tight">${i.nickname || i.name}</div></div><div class="text-xs text-gray-500 pl-6">${fmt(i.price)} x ${i.qty}</div></div><div class="flex items-center gap-1"><button onclick="updateQty(${i.id},'${i.variant}',-1)" class="w-6 h-6 bg-gray-200 rounded font-bold hover:bg-gray-300">-</button><button onclick="editCartQty(${i.id}, '${i.variant}', ${i.qty})" class="min-w-[1.5rem] px-1 h-6 text-center text-sm font-bold bg-white border border-gray-300 rounded hover:bg-yellow-100 transition">${i.qty}</button><button onclick="updateQty(${i.id},'${i.variant}',1)" class="w-6 h-6 bg-bebyte-purple text-white rounded font-bold hover:bg-purple-700">+</button></div></div>`).join('');
 }
 
-// --- TABLET NUMPAD LOGIC ---
+// --- NUMPAD & PAYMENT ---
 window.numpad = (val) => { playSound('click'); if (val === 'backspace') tempCashString = tempCashString.slice(0, -1); else if (val === '10000' || val === '20000' || val === '50000') { let currentVal = Number(tempCashString) || 0; currentVal += Number(val); tempCashString = currentVal.toString(); } else tempCashString += val; updateCashDisplay(); };
 window.clearCash = () => { playSound('click'); tempCashString = ""; updateCashDisplay(); };
 window.setUangPas = () => { playSound('click'); tempCashString = currentTotalBill.toString(); updateCashDisplay(); };
@@ -183,14 +181,13 @@ function updateCashDisplay() {
     if(change < 0) elsPay.btnFinal.classList.add('opacity-50','cursor-not-allowed'); else elsPay.btnFinal.classList.remove('opacity-50','cursor-not-allowed');
 }
 
-// --- PAYMENT ---
 els.btnSend.addEventListener('click', () => { 
     playSound('click');
     if(!cart.length) return showAlert("KOSONG", "Pilih menu dulu!"); 
     if(!els.custName.value.trim()) { els.custName.focus(); return showAlert("NAMA?", "Isi nama pemesan!"); } 
     currentTotalBill = cart.reduce((a,b) => a + (b.price * b.qty), 0); 
     elsPay.total.innerText = fmt(currentTotalBill); 
-    tempCashString = ""; updateCashDisplay(); // Reset Numpad
+    tempCashString = ""; updateCashDisplay();
     setMethod('CASH'); elsPay.modal.classList.remove('hidden'); 
 });
 
@@ -218,7 +215,7 @@ elsPay.btnFinal.addEventListener('click', async () => {
 });
 elsPay.btnClose.addEventListener('click', () => { playSound('click'); elsPay.modal.classList.add('hidden'); });
 
-// --- REPORT ---
+// --- REPORT & PRINT (METODE CLONING) ---
 window.changeReportPage = (delta) => { playSound('click'); const data = getReport(); const totalPages = Math.ceil(data.totalTrx / itemsPerPage); const newPage = reportPage + delta; if(newPage >= 1 && newPage <= totalPages) { reportPage = newPage; renderReportTable(); } };
 function renderReportTable() {
     const data = getReport();
@@ -248,7 +245,25 @@ function renderReportTable() {
     els.reportContent.innerHTML = `${headerHtml}<div class="${containerClass}"><table class="w-full">${tableHeader}<tbody>${tableRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data</td></tr>'}</tbody></table></div>${isPrintingMode ? summaryHtml : paginationControls}`;
 }
 els.btnReport.addEventListener('click', () => { playSound('click'); isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
-document.getElementById('btn-print-pdf').addEventListener('click', () => { playSound('click'); isPrintingMode = true; renderReportTable(); setTimeout(() => { window.print(); isPrintingMode = false; renderReportTable(); }, 27000); });
+
+// --- LOGIC PRINT CLONING ---
+document.getElementById('btn-print-pdf').addEventListener('click', () => { 
+    playSound('click'); 
+    isPrintingMode = true; 
+    renderReportTable(); // 1. Render data lengkap
+    
+    // 2. Clone ke area print
+    const content = document.getElementById('report-content').innerHTML;
+    const printArea = document.getElementById('print-area');
+    printArea.innerHTML = content;
+    
+    // 3. Print
+    setTimeout(() => { 
+        window.print(); 
+        setTimeout(() => { printArea.innerHTML = ''; isPrintingMode = false; renderReportTable(); }, 1000);
+    }, 1000); 
+});
+
 if(els.btnResetDB) els.btnResetDB.addEventListener('click', () => { showConfirm("RESET DATABASE?", "Semua data penjualan bakal ilang permanen, yakin?", () => { clearReportData(); }); });
 if(els.btnBackup) els.btnBackup.addEventListener('click', () => { playSound('click'); downloadBackup(); });
 
@@ -266,12 +281,8 @@ document.getElementById('close-variant').addEventListener('click', () => { playS
 document.getElementById('close-payment').addEventListener('click', () => { playSound('click'); elsPay.modal.classList.add('hidden'); });
 document.getElementById('close-report').addEventListener('click', () => { playSound('click'); els.modalReport.classList.add('hidden'); });
 
-// Status Online
 const statusDot = document.getElementById('status-dot');
 function updateOnlineStatus() { if (!statusDot) return; if (navigator.onLine) { statusDot.classList.remove('bg-red-600'); statusDot.classList.add('bg-green-500'); statusDot.title = "Online"; } else { statusDot.classList.remove('bg-green-500'); statusDot.classList.add('bg-red-600', 'animate-pulse'); statusDot.title = "OFFLINE!"; showAlert("KONEKSI PUTUS!", "Cek internet!"); } }
 window.addEventListener('online', updateOnlineStatus); window.addEventListener('offline', updateOnlineStatus); updateOnlineStatus();
 
-
 renderMenu(); updateCart();
-
-
