@@ -4,7 +4,7 @@ import { sendToDiscord, sendOrderDone } from './discord.js';
 
 const fmt = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v);
 
-// --- SFX ---
+// --- SFX (Audio) ---
 const sounds = {
     click: document.getElementById('sfx-click'),
     success: document.getElementById('sfx-success'),
@@ -19,11 +19,12 @@ function playSound(type) {
 }
 window.playSound = playSound; 
 
-// --- STATE ---
+// --- STATE MANAGEMENT ---
 let cart = JSON.parse(localStorage.getItem('cart_temp') || '[]');
 let isStockMode = false; 
 let localMenu = [];
 
+// Load Data & Sync Stock
 try {
     const savedStock = JSON.parse(localStorage.getItem('menu_stock') || '[]');
     localMenu = MENU.map(newItem => {
@@ -49,8 +50,9 @@ let reportPage = 1;
 const itemsPerPage = 5; 
 let isPrintingMode = false;
 let editingItemData = null; 
-let tempCashString = ""; // Numpad
+let tempCashString = ""; // Variabel Numpad Tablet
 
+// DOM ELEMENTS
 const els = {
   grid: document.getElementById('menu-grid'),
   cartList: document.getElementById('cart-list'),
@@ -132,7 +134,7 @@ function renderMenu() {
   }).join('');
 }
 
-// --- ACTIONS ---
+// --- ACTIONS (Stock & Variants) ---
 window.toggleStockMode = () => { playSound('click'); isStockMode = !isStockMode; const btn = els.btnStockMode; if(isStockMode) { btn.classList.replace('bg-bebyte-purple', 'bg-red-600'); btn.innerHTML = "⚠️ EDIT STOK"; showAlert("MODE STOK", "Klik menu buat ubah status HABIS/ADA."); } else { btn.classList.replace('bg-red-600', 'bg-bebyte-purple'); btn.innerHTML = "📦 Stok"; } renderMenu(); };
 window.toggleStock = (id) => { const item = localMenu.find(x => x.id === id); if(item.variants) openVariantStockModal(item); else { item.active = !item.active; saveMenuStock(); renderMenu(); } };
 function openVariantStockModal(item) { els.variantTitle.innerText = `ATUR STOK: ${item.name}`; els.variantOptions.innerHTML = item.variants.map(v => `<button onclick="toggleVariantStock(${item.id}, '${v.name}')" class="w-full text-left px-4 py-3 border-2 border-black rounded-lg font-bold mb-2 flex justify-between items-center ${v.active ? 'bg-green-100' : 'bg-red-100'}"><span>${v.nickname || v.name}</span><span class="text-xs border border-black px-2 py-1 rounded bg-white font-black">${v.active ? '✅ ADA' : '❌ HABIS'}</span></button>`).join(''); els.modalVariant.classList.remove('hidden'); }
@@ -168,19 +170,30 @@ function updateCart() {
     else els.cartList.innerHTML = cart.map(i => `<div class="flex justify-between items-center bg-white p-2 rounded border-2 border-black mb-2 shadow-sm group hover:shadow-md transition"><div class="flex-1 pr-2"><div class="flex items-center gap-2"><button onclick="removeCartItem(${i.id}, '${i.variant}')" class="text-gray-300 hover:text-red-500 transition" title="Hapus Item">❌</button><div class="font-bold text-sm leading-tight">${i.nickname || i.name}</div></div><div class="text-xs text-gray-500 pl-6">${fmt(i.price)} x ${i.qty}</div></div><div class="flex items-center gap-1"><button onclick="updateQty(${i.id},'${i.variant}',-1)" class="w-6 h-6 bg-gray-200 rounded font-bold hover:bg-gray-300">-</button><button onclick="editCartQty(${i.id}, '${i.variant}', ${i.qty})" class="min-w-[1.5rem] px-1 h-6 text-center text-sm font-bold bg-white border border-gray-300 rounded hover:bg-yellow-100 transition">${i.qty}</button><button onclick="updateQty(${i.id},'${i.variant}',1)" class="w-6 h-6 bg-bebyte-purple text-white rounded font-bold hover:bg-purple-700">+</button></div></div>`).join('');
 }
 
-// --- NUMPAD & PAYMENT ---
+// --- TABLET NUMPAD LOGIC ---
 window.numpad = (val) => { playSound('click'); if (val === 'backspace') tempCashString = tempCashString.slice(0, -1); else if (val === '10000' || val === '20000' || val === '50000') { let currentVal = Number(tempCashString) || 0; currentVal += Number(val); tempCashString = currentVal.toString(); } else tempCashString += val; updateCashDisplay(); };
 window.clearCash = () => { playSound('click'); tempCashString = ""; updateCashDisplay(); };
 window.setUangPas = () => { playSound('click'); tempCashString = currentTotalBill.toString(); updateCashDisplay(); };
+
+// --- UPDATE DISPLAY CASH (LOGIC TOMBOL PINTAR) ---
 function updateCashDisplay() {
     elsPay.inputCash.value = tempCashString ? parseInt(tempCashString).toLocaleString('id-ID') : "";
     const cash = Number(tempCashString) || 0;
     const change = cash - currentTotalBill;
+    
     elsPay.textChange.innerText = fmt(change);
     elsPay.textChange.className = change < 0 ? 'font-black text-xl text-red-600' : 'font-black text-xl text-bebyte-green';
-    if(change < 0) elsPay.btnFinal.classList.add('opacity-50','cursor-not-allowed'); else elsPay.btnFinal.classList.remove('opacity-50','cursor-not-allowed');
+    
+    // !!! FIX VALIDASI TOMBOL !!!
+    // Hanya disable kalau MODE CASH + DUIT KURANG. QRIS selalu enable.
+    if(currentPaymentMethod === 'CASH' && change < 0) {
+        elsPay.btnFinal.classList.add('opacity-50','cursor-not-allowed');
+    } else {
+        elsPay.btnFinal.classList.remove('opacity-50','cursor-not-allowed');
+    }
 }
 
+// --- PAYMENT METHOD SELECTION ---
 els.btnSend.addEventListener('click', () => { 
     playSound('click');
     if(!cart.length) return showAlert("KOSONG", "Pilih menu dulu!"); 
@@ -192,13 +205,27 @@ els.btnSend.addEventListener('click', () => {
 });
 
 window.setMethod = (type) => { 
-    playSound('click'); currentPaymentMethod = type; 
-    if(type === 'CASH') { elsPay.btnCash.className = "border-2 border-black py-2 rounded font-bold bg-bebyte-yellow ring-2 ring-black ring-offset-2"; elsPay.btnQris.className = "border-2 border-black py-2 rounded font-bold bg-white hover:bg-gray-100"; elsPay.grpCash.classList.remove('hidden'); } 
-    else { elsPay.btnQris.className = "border-2 border-black py-2 rounded font-bold bg-bebyte-yellow ring-2 ring-black ring-offset-2"; elsPay.btnCash.className = "border-2 border-black py-2 rounded font-bold bg-white hover:bg-gray-100"; elsPay.grpCash.classList.add('hidden'); } 
+    playSound('click'); 
+    currentPaymentMethod = type; 
+    
+    if(type === 'CASH') { 
+        elsPay.btnCash.className = "border-2 border-black py-2 rounded font-bold bg-bebyte-yellow ring-2 ring-black ring-offset-2 transition-all"; 
+        elsPay.btnQris.className = "border-2 border-black py-2 rounded font-bold bg-white hover:bg-gray-100 transition-all"; 
+        elsPay.grpCash.classList.remove('hidden'); 
+    } 
+    else { 
+        elsPay.btnQris.className = "border-2 border-black py-2 rounded font-bold bg-bebyte-yellow ring-2 ring-black ring-offset-2 transition-all"; 
+        elsPay.btnCash.className = "border-2 border-black py-2 rounded font-bold bg-white hover:bg-gray-100 transition-all"; 
+        elsPay.grpCash.classList.add('hidden'); 
+    }
+    
+    // Trigger update agar status tombol bayar langsung menyesuaikan
+    updateCashDisplay();
 };
 
 elsPay.btnFinal.addEventListener('click', async () => { 
     const cash = Number(tempCashString) || 0; 
+    // Double check validasi saat diklik
     if(currentPaymentMethod === 'CASH' && cash < currentTotalBill) { playSound('error'); return showAlert("DUIT KURANG", "Cek lagi!"); }
     
     elsPay.btnFinal.disabled = true; elsPay.btnFinal.innerText = "SENDING..."; 
@@ -215,7 +242,7 @@ elsPay.btnFinal.addEventListener('click', async () => {
 });
 elsPay.btnClose.addEventListener('click', () => { playSound('click'); elsPay.modal.classList.add('hidden'); });
 
-// --- REPORT & PRINT (METODE CLONING) ---
+// --- REPORT & PRINT (CLONING METHOD) ---
 window.changeReportPage = (delta) => { playSound('click'); const data = getReport(); const totalPages = Math.ceil(data.totalTrx / itemsPerPage); const newPage = reportPage + delta; if(newPage >= 1 && newPage <= totalPages) { reportPage = newPage; renderReportTable(); } };
 function renderReportTable() {
     const data = getReport();
@@ -246,18 +273,13 @@ function renderReportTable() {
 }
 els.btnReport.addEventListener('click', () => { playSound('click'); isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
 
-// --- LOGIC PRINT CLONING ---
 document.getElementById('btn-print-pdf').addEventListener('click', () => { 
     playSound('click'); 
     isPrintingMode = true; 
-    renderReportTable(); // 1. Render data lengkap
-    
-    // 2. Clone ke area print
+    renderReportTable(); 
     const content = document.getElementById('report-content').innerHTML;
     const printArea = document.getElementById('print-area');
     printArea.innerHTML = content;
-    
-    // 3. Print
     setTimeout(() => { 
         window.print(); 
         setTimeout(() => { printArea.innerHTML = ''; isPrintingMode = false; renderReportTable(); }, 1000);
