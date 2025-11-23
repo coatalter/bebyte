@@ -248,7 +248,7 @@ function renderReportTable() {
     els.reportContent.innerHTML = `${headerHtml}<div class="${containerClass}"><table class="w-full">${tableHeader}<tbody>${tableRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data</td></tr>'}</tbody></table></div>${isPrintingMode ? summaryHtml : paginationControls}`;
 }
 els.btnReport.addEventListener('click', () => { playSound('click'); isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
-document.getElementById('btn-print-pdf').addEventListener('click', () => { playSound('click'); isPrintingMode = true; renderReportTable(); setTimeout(() => { window.print(); isPrintingMode = false; renderReportTable(); }, 1000); });
+document.getElementById('btn-print-pdf').addEventListener('click', () => { playSound('click'); isPrintingMode = true; renderReportTable(); setTimeout(() => { window.print(); isPrintingMode = false; renderReportTable(); }, 5000); });
 if(els.btnResetDB) els.btnResetDB.addEventListener('click', () => { showConfirm("RESET DATABASE?", "Semua data penjualan bakal ilang permanen, yakin?", () => { clearReportData(); }); });
 if(els.btnBackup) els.btnBackup.addEventListener('click', () => { playSound('click'); downloadBackup(); });
 
@@ -270,5 +270,6 @@ document.getElementById('close-report').addEventListener('click', () => { playSo
 const statusDot = document.getElementById('status-dot');
 function updateOnlineStatus() { if (!statusDot) return; if (navigator.onLine) { statusDot.classList.remove('bg-red-600'); statusDot.classList.add('bg-green-500'); statusDot.title = "Online"; } else { statusDot.classList.remove('bg-green-500'); statusDot.classList.add('bg-red-600', 'animate-pulse'); statusDot.title = "OFFLINE!"; showAlert("KONEKSI PUTUS!", "Cek internet!"); } }
 window.addEventListener('online', updateOnlineStatus); window.addEventListener('offline', updateOnlineStatus); updateOnlineStatus();
+
 
 renderMenu(); updateCart();
