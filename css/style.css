@@ -38,15 +38,14 @@ body {
 @media print {
     @page { 
         size: A4; 
-        margin: 10mm; 
+        margin: 5mm; 
     } 
-
     html, body {
-        height: auto !important;
-        min-height: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important;
+        overflow: visible !important; /* Paksa scrollbar hilang */
         background: white !important;
     }
 
@@ -55,83 +54,60 @@ body {
     }
 
     #modal-report {
-        position: absolute !important;
+        position: relative !important; 
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
         background: white !important;
+        z-index: 9999 !important;
         border: none !important;
         box-shadow: none !important;
-        display: block !important; 
-        overflow: visible !important;
-        z-index: 9999 !important;
-        padding: 0 !important;
-        margin: 0 !important;
     }
 
+    /* 4. WRAPPER KONTEN */
     #modal-report > div, 
     #report-content,
     .custom-scroll {
         position: static !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
         width: 100% !important;
+        height: auto !important;
         overflow: visible !important;
         display: block !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
     }
 
-    thead { 
-        display: table-header-group;
-    }
-    
-    tfoot { 
-        display: table-footer-group; 
-    }
 
-    tr { 
-        page-break-inside: avoid;
-        page-break-after: auto;
-    }
-
+    button, 
     #close-report, 
     #btn-reset-db, 
     #btn-backup, 
     #btn-print-pdf, 
     .pagination-controls, 
     .modal-footer,
-    .sticky {
+    .sticky { 
         display: none !important; 
     }
 
     table { 
-        width: 100% !important; 
+        width: 100% !important;
+        min-width: 600px !important; 
         border-collapse: collapse; 
-        font-size: 11pt;
+        font-size: 10pt; 
     }
     
     th, td {
         border: 1px solid #000 !important;
-        padding: 5px !important;
+        padding: 4px !important;
         color: black !important;
+        white-space: normal !important;
     }
 
-    tr:nth-child(even) { background-color: transparent !important; }
-    tr:nth-child(odd) { background-color: transparent !important; }
+    /* Header Tabel */
+    thead { display: table-header-group; }
+    thead th { background-color: #eee !important; color: black !important; font-weight: bold; }
     
-    thead th {
-        background-color: #ddd !important;
-        font-weight: bold !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-
-    ::-webkit-scrollbar { display: none; }
+    /* Baris */
+    tr { page-break-inside: avoid; }
 }
