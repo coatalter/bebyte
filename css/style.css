@@ -7,6 +7,13 @@
     --bebyte-green: #4ade80;
 }
 
+/* TOUCH & TABLET OPTIMIZATIONS */
+* {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+button, input, select { cursor: pointer; }
+
 body {
     font-family: 'Fredoka', sans-serif;
     background-color: var(--bebyte-purple);
@@ -31,95 +38,44 @@ body {
 
 @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
 .animate-fade { animation: fadeEffect 0.2s ease-out forwards; }
-
 @keyframes popEffect { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 .animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-/* FILE: css/style.css (Bagian paling bawah) */
-
+/* --- PRINT STYLE (METODE CLONING) --- */
 @media print {
     @page { 
         size: A4; 
-        margin: 5mm; 
+        margin: 10mm; 
+    } 
+
+    /* 1. HILANGKAN SELURUH APLIKASI DARI KERTAS */
+    body > * { display: none !important; }
+
+    /* 2. MUNCULKAN HANYA PRINT AREA */
+    #print-area {
+        display: block !important;
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0;
     }
 
+    /* 3. RESET HTML/BODY */
     html, body {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        background: white !important;
-        position: relative !important;
+        height: auto !important; overflow: visible !important; background: white !important;
     }
 
-    body > *:not(#modal-report) { 
-        display: none !important; 
-    }
-
-    #modal-report {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        overflow: visible !important;
-        display: block !important;
-        background: white !important;
-        z-index: 9999 !important;
-        border: none !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    #modal-report > div, 
-    #report-content,
-    .custom-scroll,
-    .overflow-y-auto,
-    .max-h-\[90vh\],
-    .max-h-\[50vh\] {
-        position: static !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        overflow: visible !important;
-        display: block !important;
-        flex: none !important;
-    }
-
-    #close-report, 
-    #btn-reset-db, 
-    #btn-backup, 
-    #btn-print-pdf, 
-    .pagination-controls, 
-    .modal-footer,
-    .sticky,
-    button {
-        display: none !important; 
-    }
-
-    table { 
-        width: 100% !important;
-        table-layout: fixed;
-        border-collapse: collapse; 
-        font-size: 10pt; 
+    /* 4. STYLING TABEL DI DALAM PRINT AREA */
+    #print-area table {
+        width: 100% !important; border-collapse: collapse; font-family: sans-serif; font-size: 10pt;
     }
     
-    th, td {
-        border: 1px solid #000 !important;
-        padding: 4px !important;
-        color: black !important;
-        word-wrap: break-word;
+    #print-area th, #print-area td {
+        border: 1px solid #000; padding: 5px; color: black; word-wrap: break-word;
     }
 
-    thead { display: table-header-group; }
+    #print-area thead { display: table-header-group; }
+    #print-area tr { page-break-inside: avoid; }
     
-    tr { page-break-inside: avoid; page-break-after: auto; }
+    #print-area h2 { font-size: 24px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+    #print-area p { font-size: 12px; color: #555; }
     
-    .break-inside-avoid { page-break-inside: avoid; }
+    button, .no-print { display: none !important; }
 }
