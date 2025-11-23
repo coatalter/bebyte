@@ -4,6 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
   <title>BeByte - Order System</title>
+  
+  <link rel="icon" type="image/png" href="assets/bebyte-logo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -36,7 +41,7 @@
   <nav class="bg-bebyte-yellow border-b-4 border-black px-4 py-3 sticky top-0 z-50 shadow-xl">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <img src="assets/bebyte-logo.png" alt="BeByte" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
+        <img src="assets/bebyte-logo.png" onerror="this.src='https://placehold.co/100x50?text=LOGO'" alt="BeByte" class="h-14 w-auto transform -rotate-6 hover:rotate-0 transition-all drop-shadow-[3px_3px_0px_rgba(0,0,0,1)] filter brightness-110">
       </div>
       <div class="flex gap-2 items-center">
           <div id="status-dot" class="w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow shadow-black transition-colors" title="Online"></div>
@@ -54,7 +59,7 @@
             <p class="text-lg font-bold text-gray-600">Selasa, 25 November 2025 • Booth BeByte</p>
             <div class="inline-block mt-3 bg-bebyte-green text-black px-4 py-1 font-bold border-2 border-black rounded-full text-sm animate-bounce">🦖 Est. 2025</div>
         </div>
-        <div class="absolute -right-4 -top-8 md:-top-12 z-10 pointer-events-none"><img src="assets/bebyte-mascot.png" class="h-48 md:h-64 w-auto transform rotate-12 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.5)] opacity-90 mix-blend-multiply"></div>
+        <div class="absolute -right-4 -top-8 md:-top-12 z-10 pointer-events-none"><img src="assets/bebyte-mascot.png" onerror="this.style.display='none'" class="h-48 md:h-64 w-auto transform rotate-12 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.5)] opacity-90 mix-blend-multiply"></div>
         <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-bebyte-yellow rounded-full border-4 border-black z-0"></div>
     </div>
 
@@ -124,7 +129,7 @@
     <div class="bg-white border-4 border-bebyte-purple rounded-xl w-full max-w-5xl shadow-2xl relative flex flex-col max-h-[90vh] animate-pop">
         <div class="bg-white p-4 border-b border-gray-200 flex justify-between items-center shrink-0 rounded-t-xl">
             <div class="flex items-center gap-2">
-                <img src="assets/bebyte-logo.png" class="h-8">
+                <img src="assets/bebyte-logo.png" onerror="this.style.display='none'" class="h-8">
                 <span class="font-black text-bebyte-purple">ADMIN DASHBOARD</span>
             </div>
             <button id="close-report" class="text-black font-bold text-2xl hover:text-red-600 px-2 transition hover:rotate-90">&times;</button>
@@ -247,6 +252,8 @@
         </div>
     </div>
   </div>
+
+  <div id="print-area" class="hidden"></div>
 
   <script type="module" src="js/app.js"></script>
 </body>
