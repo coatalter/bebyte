@@ -35,18 +35,23 @@ body {
 @keyframes popEffect { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 .animate-pop { animation: popEffect 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
+/* FILE: css/style.css (Bagian paling bawah) */
+
 @media print {
     @page { 
         size: A4; 
         margin: 5mm; 
-    } 
+    }
+
     html, body {
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
+        min-height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important; /* Paksa scrollbar hilang */
+        overflow: visible !important;
         background: white !important;
+        position: relative !important;
     }
 
     body > *:not(#modal-report) { 
@@ -54,45 +59,53 @@ body {
     }
 
     #modal-report {
-        position: relative !important; 
+        position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
         overflow: visible !important;
         display: block !important;
         background: white !important;
         z-index: 9999 !important;
         border: none !important;
         box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* 4. WRAPPER KONTEN */
     #modal-report > div, 
     #report-content,
-    .custom-scroll {
+    .custom-scroll,
+    .overflow-y-auto,
+    .max-h-\[90vh\],
+    .max-h-\[50vh\] {
         position: static !important;
         width: 100% !important;
         height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
         overflow: visible !important;
         display: block !important;
+        flex: none !important;
     }
 
-
-    button, 
     #close-report, 
     #btn-reset-db, 
     #btn-backup, 
     #btn-print-pdf, 
     .pagination-controls, 
     .modal-footer,
-    .sticky { 
+    .sticky,
+    button {
         display: none !important; 
     }
 
     table { 
         width: 100% !important;
-        min-width: 600px !important; 
+        table-layout: fixed;
         border-collapse: collapse; 
         font-size: 10pt; 
     }
@@ -101,13 +114,12 @@ body {
         border: 1px solid #000 !important;
         padding: 4px !important;
         color: black !important;
-        white-space: normal !important;
+        word-wrap: break-word;
     }
 
-    /* Header Tabel */
     thead { display: table-header-group; }
-    thead th { background-color: #eee !important; color: black !important; font-weight: bold; }
     
-    /* Baris */
-    tr { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    
+    .break-inside-avoid { page-break-inside: avoid; }
 }
