@@ -248,7 +248,7 @@ function renderReportTable() {
     els.reportContent.innerHTML = `${headerHtml}<div class="${containerClass}"><table class="w-full">${tableHeader}<tbody>${tableRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data</td></tr>'}</tbody></table></div>${isPrintingMode ? summaryHtml : paginationControls}`;
 }
 els.btnReport.addEventListener('click', () => { playSound('click'); isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
-document.getElementById('btn-print-pdf').addEventListener('click', () => { playSound('click'); isPrintingMode = true; renderReportTable(); setTimeout(() => { window.print(); isPrintingMode = false; renderReportTable(); }, 7000); });
+document.getElementById('btn-print-pdf').addEventListener('click', () => { playSound('click'); isPrintingMode = true; renderReportTable(); setTimeout(() => { window.print(); isPrintingMode = false; renderReportTable(); }, 27000); });
 if(els.btnResetDB) els.btnResetDB.addEventListener('click', () => { showConfirm("RESET DATABASE?", "Semua data penjualan bakal ilang permanen, yakin?", () => { clearReportData(); }); });
 if(els.btnBackup) els.btnBackup.addEventListener('click', () => { playSound('click'); downloadBackup(); });
 
@@ -273,4 +273,5 @@ window.addEventListener('online', updateOnlineStatus); window.addEventListener('
 
 
 renderMenu(); updateCart();
+
 
