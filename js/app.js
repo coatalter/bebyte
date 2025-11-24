@@ -128,7 +128,7 @@ function renderMenu() {
     const cardClass = isFullOOS ? "grayscale opacity-70" : "";
     let action, btnText, btnClass;
     if (isStockMode) { action = `toggleStock(${m.id})`; btnText = isFullOOS ? "SET: ADA" : "SET: HABIS"; btnClass = isFullOOS ? "bg-blue-500 text-white" : "bg-red-500 text-white"; }
-    else { action = isFullOOS ? "" : `handleItemClick(${m.id})`; btnText = isFullOOS ? "HABIS ❌" : (m.variants ? 'PILIH ▾' : '+ ADD'); btnClass = isFullOOS ? "bg-gray-400 border-gray-500 cursor-not-allowed" : "bg-bebyte-green text-black hover:bg-green-400 shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none"; }
+    else { action = isFullOOS ? "" : `handleItemClick(${m.id})`; btnText = isFullOOS ? "HABIS ❌" : (m.variants ? 'PILIH ▾' : '+ ADD'); btnClass = isFullOOS ? "bg-bebyte-green text-black hover:bg-green-400 shadow-[2px_2px_0px_0px_black] active:translate-y-1 active:shadow-none"; }
     const displayName = (!m.variants && m.nickname) ? m.nickname : m.name;
     return `<article class="bg-white rounded-xl overflow-hidden card-pop flex flex-col h-full relative group ${cardClass}"><div class="relative h-40 w-full overflow-hidden bg-gray-200"><img src="${m.img}" onerror="this.src='https://placehold.co/300x200?text=No+Image'" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">${isFullOOS ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 z-20"><span class="text-white font-black text-2xl border-4 border-white px-2 -rotate-12">HABIS!</span></div>' : ''}<div class="absolute top-2 right-2 bg-bebyte-purple text-white text-xs font-bold px-2 py-1 border-2 border-black rounded z-10">${m.category}</div></div><div class="p-3 flex flex-col flex-grow"><h3 class="font-black text-lg text-black leading-tight uppercase">${displayName}</h3><p class="text-xs text-gray-500 mb-2 leading-tight min-h-[2.5em]">${m.desc || m.name}</p><div class="flex-grow"></div><div class="flex justify-between items-end mt-2 pt-2 border-t-2 border-dashed border-gray-200"><span class="font-bold text-bebyte-purple bg-purple-100 px-2 py-1 rounded border border-purple-200 text-sm">${fmt(m.price)}</span><button onclick="playSound('click'); ${action}" class="${btnClass} border-2 border-black px-3 py-1 rounded-lg font-bold text-xs transition flex items-center gap-1">${btnText}</button></div></div></article>`;
   }).join('');
@@ -184,8 +184,7 @@ function updateCashDisplay() {
     elsPay.textChange.innerText = fmt(change);
     elsPay.textChange.className = change < 0 ? 'font-black text-xl text-red-600' : 'font-black text-xl text-bebyte-green';
     
-    // !!! FIX VALIDASI TOMBOL !!!
-    // Hanya disable kalau MODE CASH + DUIT KURANG. QRIS selalu enable.
+    // Validasi tombol bayar
     if(currentPaymentMethod === 'CASH' && change < 0) {
         elsPay.btnFinal.classList.add('opacity-50','cursor-not-allowed');
     } else {
@@ -218,14 +217,11 @@ window.setMethod = (type) => {
         elsPay.btnCash.className = "border-2 border-black py-2 rounded font-bold bg-white hover:bg-gray-100 transition-all"; 
         elsPay.grpCash.classList.add('hidden'); 
     }
-    
-    // Trigger update agar status tombol bayar langsung menyesuaikan
     updateCashDisplay();
 };
 
 elsPay.btnFinal.addEventListener('click', async () => { 
     const cash = Number(tempCashString) || 0; 
-    // Double check validasi saat diklik
     if(currentPaymentMethod === 'CASH' && cash < currentTotalBill) { playSound('error'); return showAlert("DUIT KURANG", "Cek lagi!"); }
     
     elsPay.btnFinal.disabled = true; elsPay.btnFinal.innerText = "SENDING..."; 
@@ -242,7 +238,7 @@ elsPay.btnFinal.addEventListener('click', async () => {
 });
 elsPay.btnClose.addEventListener('click', () => { playSound('click'); elsPay.modal.classList.add('hidden'); });
 
-// --- REPORT & PRINT (CLONING METHOD) ---
+// --- REPORT & PRINT (PERBAIKAN LOGIKA) ---
 window.changeReportPage = (delta) => { playSound('click'); const data = getReport(); const totalPages = Math.ceil(data.totalTrx / itemsPerPage); const newPage = reportPage + delta; if(newPage >= 1 && newPage <= totalPages) { reportPage = newPage; renderReportTable(); } };
 function renderReportTable() {
     const data = getReport();
@@ -273,17 +269,40 @@ function renderReportTable() {
 }
 els.btnReport.addEventListener('click', () => { playSound('click'); isPrintingMode = false; reportPage = 1; renderReportTable(); els.modalReport.classList.remove('hidden'); });
 
+// === LOGIKA CETAK YANG DIPERBAIKI ===
 document.getElementById('btn-print-pdf').addEventListener('click', () => { 
     playSound('click'); 
     isPrintingMode = true; 
+    
+    // 1. Render ulang tabel dalam mode cetak (semua data, tanpa scroll)
     renderReportTable(); 
-    const content = document.getElementById('report-content').innerHTML;
+    
+    // 2. Ambil konten HTML
+    const content = els.reportContent.innerHTML;
     const printArea = document.getElementById('print-area');
+    
+    // 3. Masukkan konten ke print-area dan pastikan TERLIHAT (Hapus hidden)
     printArea.innerHTML = content;
+    printArea.classList.remove('hidden'); 
+    
+    // Trik: Paksa background putih di print-area agar tidak ikut warna body (ungu)
+    printArea.style.backgroundColor = 'white';
+    printArea.style.color = 'black';
+    printArea.style.minHeight = '100vh';
+    
+    // 4. Beri jeda agar browser sempat merender DOM sebelum window.print()
     setTimeout(() => { 
         window.print(); 
-        setTimeout(() => { printArea.innerHTML = ''; isPrintingMode = false; renderReportTable(); }, 1000);
-    }, 1000); 
+        
+        // 5. Bersihkan setelah selesai
+        setTimeout(() => { 
+            printArea.innerHTML = ''; 
+            printArea.classList.add('hidden'); // Sembunyikan lagi
+            printArea.style = ''; // Reset style inline
+            isPrintingMode = false; 
+            renderReportTable(); // Kembalikan ke tampilan modal biasa
+        }, 500);
+    }, 800); 
 });
 
 if(els.btnResetDB) els.btnResetDB.addEventListener('click', () => { showConfirm("RESET DATABASE?", "Semua data penjualan bakal ilang permanen, yakin?", () => { clearReportData(); }); });
