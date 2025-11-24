@@ -7,7 +7,7 @@ export const MENU = [
   { 
     id: 1, 
     name: 'Lumpia Ubi Lumer', 
-    price: 12000, 
+    price: 15000, 
     category: 'Food', 
     img: './assets/ubiunguahh.jpg',
     active: true,
@@ -31,7 +31,7 @@ export const MENU = [
   { 
     id: 3, 
     name: 'Sticky Milk Series', 
-    price: 15000, 
+    price: 12000, 
     category: 'Drink', 
     img: './assets/stickymilk.jpg',
     active: true,
@@ -45,7 +45,7 @@ export const MENU = [
     name: 'Es Lumut', 
     nickname: 'ES LUMUT',
     desc: 'Es segar penghilang dahaga',
-    price: 7000, 
+    price: 10000, 
     category: 'Drink', 
     img: './assets/eslumut.jpg',
     variants: null,
@@ -56,7 +56,7 @@ export const MENU = [
     name: 'Jamur Enoki Goreng', 
     nickname: 'EGOKING 🍄',
     desc: 'Enoki Goreng King Crispy',
-    price: 10000, 
+    price: 12000, 
     category: 'Food', 
     img: './assets/enoki.jpg',
     active: true,
@@ -67,4 +67,5 @@ export const MENU = [
       { name: 'Originl', nickname: 'EGOKING', desc: 'Flavourless as hell', active: true }
     ]
   },
+
 ];
