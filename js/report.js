@@ -54,15 +54,57 @@ export function clearReportData() {
     window.location.reload();
 }
 
+// --- UPDATE: BACKUP LEBIH LENGKAP ---
 export function downloadBackup() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return alert("Belum ada data transaksi!");
-    const blob = new Blob([data], { type: 'application/json' });
+    const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const stock = JSON.parse(localStorage.getItem('menu_stock') || '[]');
+    const counter = localStorage.getItem('daily_queue_counter') || '0';
+
+    const fullBackup = {
+        version: "2.0",
+        timestamp: new Date().toISOString(),
+        data: {
+            history: history,
+            stock: stock,
+            dailyCounter: counter
+        }
+    };
+
+    const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `BEBYTE_BACKUP_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}_${new Date().getHours()}.${new Date().getMinutes()}.json`;
+    a.download = `BEBYTE_FULL_BACKUP_${new Date().toLocaleDateString('id-ID').replace(/\//g,'-')}_${new Date().getHours()}.${new Date().getMinutes()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+}
+
+// --- BARU: FUNGSI RESTORE ---
+export function restoreBackup(file, callback) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const json = JSON.parse(e.target.result);
+            
+            // Cek apakah ini backup versi baru (objek) atau lama (array biasa)
+            if (json.version && json.data) {
+                // Restore Versi Baru (Lengkap)
+                if(json.data.history) localStorage.setItem(STORAGE_KEY, JSON.stringify(json.data.history));
+                if(json.data.stock) localStorage.setItem('menu_stock', JSON.stringify(json.data.stock));
+                if(json.data.dailyCounter) localStorage.setItem('daily_queue_counter', json.data.dailyCounter);
+            } else if (Array.isArray(json)) {
+                // Fallback: Restore file backup versi lama (cuma history)
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(json));
+            } else {
+                throw new Error("Format tidak dikenali");
+            }
+
+            if(callback) callback(true);
+        } catch (err) {
+            console.error(err);
+            if(callback) callback(false);
+        }
+    };
+    reader.readAsText(file);
 }
